@@ -58,6 +58,10 @@ class Menu extends Component {
                 - margins of 1 unit on all sides of the div container for the cards
                 */
 
+                // event handler function doesn't need to be declared with an arrow function if there are no args to be passed:
+                // onClick={this.cleanDishes}
+                // If we  do pass args to the event hanlder, the syntax has to be an arrow function: () => handler(args)
+                // onClick={() => this.onDishSelect(dish)}
                 <div key={dish.id} className="col-12 col-md-5 m-1">
                     <Card onClick={() => this.onDishSelect(dish)}>
                         <CardImg width="100%" src={dish.image} alt={dish.name} />
