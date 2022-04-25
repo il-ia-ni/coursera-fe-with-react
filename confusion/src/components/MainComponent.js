@@ -7,15 +7,23 @@ import Header from './HeaderComponent';
 import Footer from './FooterComponent';
 import Home from './HomeComponent';
 import Menu from './MenuComponent';
+import Contact from './ContactComponent';
+
 // import DishDetail from './DishdetailComponent';
+import { COMMENTS } from '../shared/comments';
 import { DISHES } from '../shared/dishes';
+import { LEADERS } from '../shared/leaders';
+import { PROMOTIONS } from '../shared/promotions';
 
 class Main extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            comments: COMMENTS,
             dishes: DISHES,
+            leaders: LEADERS,
+            promotions: PROMOTIONS,
             // selectedDish: null  // deactivated in favour of Reactor Route navigation
         };
     }
@@ -33,9 +41,15 @@ class Main extends Component {
         */
 
         // declaring a new functional component as an arrow function here
+
+        // Home component is instantiated here with a custom prop DISH that selects a first dish with a prop "feature: true" from a JS list of dish objects by returning a subarray of objects using .filter on the state prop DISHES of the Main
+        // The same is done for the rest of the custom props of the Home component
         const HomePage = () => {
-            return(
-                <Home />
+            return (
+                <Home dish={this.state.dishes.filter((dish) => dish.featured)[0]}
+                    leader={this.state.leaders.filter((leader) => leader.featured)[0]}
+                    promotion={this.state.promotions.filter((promotion) => promotion.featured)[0]}
+                />
             );
         }
 
@@ -51,14 +65,16 @@ class Main extends Component {
         // 2) Using an arrow function IF the component takes props: element={<COMP />}. 
         // The function component <COMP /> can be either:
         //  - declared directly here with () => <CompName propName=val /> : THIS IS OUTDATED IN V6, arrow func cannot be placed inside tags
-        //  - or received from a const (see HomePage example)
+        //  - received from a const (see HomePage example)
+        //  - inserted directly from an import of a component
         return (
             <div>
                 <Header />
                 <Routes>
                     <Route path='/' element={<Navigate replace to="/home" />} />
-                    <Route path='/home' element={<HomePage />}/>
+                    <Route path='/home' element={<HomePage />} />
                     <Route exact path='/menu' element={<Menu dishes={this.state.dishes} />} />
+                    <Route exact path='/contactus' element={<Contact />} />
                 </Routes>
                 <Footer />
             </div>
