@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 // In V6 of react-router-dom Routes replaced Switch as a more powerful alternative. See @ https://reactrouter.com/docs/en/v6/upgrading/v5#upgrade-all-switch-elements-to-routes
-// In V6 of react-router-dom Redirect is removed. NAvigate component is an alternative. See @ https://reactrouter.com/docs/en/v6/upgrading/v5#remove-redirects-inside-switch
+// In V6 of react-router-dom Redirect is removed. Navigate component is an alternative. See @ https://reactrouter.com/docs/en/v6/upgrading/v5#remove-redirects-inside-switch
 
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
 import Home from './HomeComponent';
+import AboutUs from './AboutUsComponent';
 import Menu from './MenuComponent';
 import Contact from './ContactComponent';
 
@@ -113,6 +114,7 @@ class Main extends Component {
                 <Routes>
                     <Route path='*' element={<Navigate replace to="/home" />} />
                     <Route path='/home' element={<HomePage />} />
+                    <Route path='/aboutus/' element={<AboutUs leaders={this.state.leaders}/>} />
                     <Route exact path='/menu' element={<Menu dishes={this.state.dishes} />} />
                     <Route path='/menu/:dishId' element={<DishWithId />} />
                     <Route exact path='/contactus' element={<Contact />} />
