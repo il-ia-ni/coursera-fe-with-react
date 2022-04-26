@@ -7,9 +7,8 @@ class App extends Component {
 
   render() {
 
-    // BrowserRouter is used to manage app navigation with the React Router module @ https://v5.reactrouter.com/web/guides/quick-start
-
-    // Main is a pure container component that manages all data and forwards them to presentation components
+    // BrowserRouter of the React-Dom-router is used to manage the navigation between the Views of the SPA. Routes are declared in Main component since it also manages all the data in its state
+    // Main is a container component that manages all data and forwards them to presentation components
     return (
       <BrowserRouter>
         <div className="App">

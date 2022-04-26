@@ -1,11 +1,15 @@
 import React from 'react';
-import { Card, CardImg, CardText, CardBody, CardTitle, List } from 'reactstrap';
+import { Card, CardImg, CardText, CardBody, CardTitle, List, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import { Link } from 'react-router-dom';
 
 const DishDetail = (props) => {
-    /* renders a Reactstrap Card for a selected menu item using a func component RenderDish
+    /* Functional component for rendering contents for a selected dish from a menu
+       renders a Bootstrap Breadcrumb structure up to a dish selected
+       renders a Reactstrap Card for a selected menu item using a func component RenderDish
        renders a div container with an Reactstrap unstyled list of comments for a selected menu item using a func component RenderDish
     props: 
         {selectedDish: object || none}
+        {comments: object }
     returns: 
         if selectedDish is an object: a rendered div-container containing the rendered information for the selected menu item
         if selectedDish is none: an empty div-container */
@@ -14,8 +18,25 @@ const DishDetail = (props) => {
         return (
             <div className='container'>
                 <div className='row'>
+                    <Breadcrumb>
+                        <BreadcrumbItem>
+                            <Link to='/home'>Home</Link>
+                        </BreadcrumbItem>
+                        <BreadcrumbItem>
+                            <Link to='/menu'>Menu</Link>
+                        </BreadcrumbItem>
+                        <BreadcrumbItem active>
+                            {props.selectedDish.name}
+                        </BreadcrumbItem>
+                    </Breadcrumb>
+                </div>
+                <div className='col-12'>
+                    <h3>{props.selectedDish.name}</h3>
+                    <hr />
+                </div>
+                <div className='row'>
                     <RenderDish dish={props.selectedDish} />
-                    <RenderComments comments={props.selectedDish.comments} />
+                    <RenderComments comments={props.comments} />
                 </div>
             </div>
         );
