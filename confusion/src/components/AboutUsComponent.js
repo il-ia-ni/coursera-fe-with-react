@@ -10,6 +10,8 @@ function AboutUs(props) {
     */
 
     const rendered_leaders = props.leaders.map((leader) => {
+
+        // ??? Should the key-PROP be assigned to divs or Card is also okay? @ https://stackoverflow.com/questions/28329382/understanding-unique-keys-for-array-children-in-react-js
         return (
             <RenderLeader leader={leader} />
         );
