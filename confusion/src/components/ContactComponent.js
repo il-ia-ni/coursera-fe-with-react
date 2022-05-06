@@ -33,9 +33,9 @@ class Contact extends Component {
 
     handleInputChange(event) {
         /* 
-        A static handler method binded to the data of the Contact component and used to tie props of the state of Contact component with values of corresponding Inputs of the Form over the names of the inputs (implemented over onChange attr of Input components)
+        A static handler method binded to the data of the Contact component and used to tie props of the state of the Contact component with values of corresponding Inputs of the Form over the names of the inputs (implemented over onChange attr of Input components). The method is called anytime an inputs value get changed by a user and updates the value of a corresponding state attribute.
         props: 
-            event: React onChange event object called by a target (JSX component) 
+            event: React onChange event object called by a target input (JSX component). Raised everytime a user tips in inputs
         */
 
         // console.log(event)
@@ -48,7 +48,7 @@ class Contact extends Component {
         const inputName = targetInput.name; // get a defined name of the Input. In the project the names of the inputs are matched to the props of the state object of the Contact component
 
         this.setState({
-            [inputName]: inputValue
+            [inputName]: inputValue  // ??? why the inpuName var is set here as a const in []? For direct props adressing, f.e. in Header, we just set them by the name 
         });
 
         // console.log(JSON.stringify(this.state))  // ??? Why is this line showing a prev value of the state object inspite of .setState?
@@ -71,7 +71,7 @@ class Contact extends Component {
             field: a string with a name of the field as set in the state of the component 
         */
         this.setState({
-            touched: { ...this.state.touched, [field]: true } // Crumbread means: Whatever current state is / whichever input was modified, modify only a particular field in it
+            touched: { ...this.state.touched, [field]: true } // ??? Crumbread means: Whatever current state is / whichever input was modified, modify only a particular field in it
         });
     }
 
@@ -97,7 +97,7 @@ class Contact extends Component {
 
 
         /* VALIDATION OF FIRST AND LAST NAMES */
-        
+
         if (this.state.touched.firstname && name_re.test(firstname)) {
             if (this.state.touched.firstname && firstname.length < 3) {
                 error_messages.firstname = "First Name must be at least 3 characters long!";
@@ -165,6 +165,8 @@ class Contact extends Component {
         // The component function is called in the render() since the form is getting rerendered anytime a user enters a new symbol into any input. It recieves the current values of all 4 inputs from the component state as params
         // errors_data will contain the error strings for any input with a failed validation and is displayed a corresponding error message in the FormFeedback Reactstrap components (are displyed under the input field). 
         // It is also used to set values of VALID and INVALID attrs for each input based on if the err message is empty or not
+
+        // Controlled components - here are f.e. the first 4 inputs of the form. They receive their value from the state of the component (Single Source of truth principle) as f.e. value={this.state.firstname}. With a controlled component, the input’s value is always driven by the React state. While this means you have to type a bit more code, you can now pass the value to other UI elements too, or reset it from other event handlers.
 
         return (
             <div className="container">
