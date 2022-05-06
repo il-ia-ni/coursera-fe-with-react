@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col } from 'reactstrap';
+import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback } from 'reactstrap';
 import { Link } from 'react-router-dom'
 
 class Contact extends Component {
     /* Class component to render Bootstrap Breadcrump structure and all contents of the Contact Us view in a Bootstrap formatting 
     Changed from a func component in M3 in order to control forms data in the state of the component */
+
+    // Validation should only be executed for the forms modified by user, that's why a bool-operation object TOUCHED is introduced in the component's state.
 
     constructor(props) {
         super(props);
@@ -15,10 +17,17 @@ class Contact extends Component {
             email: '',
             isAgreed: false,
             prefContact: 'Tel.',
-            message: ''
+            message: '',
+            touched: {
+                firstname: false,
+                lastname: false,
+                phone: false,
+                email: false
+            }
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
     }
     // .bind() is a built in Method for class components to pass data to the functions of a class. Takes THIS + an object of any other data as args. An alternative to pass a function as a value of JAX elements props without using an arrow function. See @ https://www.geeksforgeeks.org/reactjs-bind-method/
 
@@ -56,6 +65,86 @@ class Contact extends Component {
         event.preventDefault();  // deactivate reloading the page on submit of the form
     }
 
+    handleBlur = (field) => (evt) => {
+        /* Handler function for the OnBlur event that is invoked for any Input component ("field") whenever anything gets changed in ut by user 
+        params: 
+            field: a string with a name of the field as set in the state of the component 
+        */
+        this.setState({
+            touched: { ...this.state.touched, [field]: true } // Crumbread means: Whatever current state is / whichever input was modified, modify only a particular field in it
+        });
+    }
+
+    validate_inputs(firstname, lastname, phone, email) {
+        /* The function validating the values of the "blured" inputs (touched by user)
+        Receives current input values of 4 attr in the state of the component
+        Is called in the render() Method of the component since the form is getting rerendered anytime a user enters a new symbol into any input 
+        Is also used to set true / false for VALID and INVALID attributes of each imput based on if the error message is empty or not*/
+
+        const error_messages = {
+            firstname: '',
+            lastname: '',
+            phone: '',
+            email: '',
+        };
+
+        const name_re = /^[a-z]+$/i;
+        // RegEx in JS: https://developer.mozilla.org/de/docs/Web/JavaScript/Guide/Regular_Expressions
+        // "i" is the case-insensitive flag, there's no need for the extra character range A-Z. See @ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+
+        const phone_re = /^\d+$/;
+        // RegEx for only numbers are allowed. "/^"" is a Circumflex-symbol for the start of the input !== "[^...]". In square brackets "^" means negation of the pattern!
+
+
+        /* VALIDATION OF FIRST AND LAST NAMES */
+        
+        if (this.state.touched.firstname && name_re.test(firstname)) {
+            if (this.state.touched.firstname && firstname.length < 3) {
+                error_messages.firstname = "First Name must be at least 3 characters long!";
+            }
+            else if (this.state.touched.firstname && firstname.length > 10) {
+                error_messages.firstname = "First Name must be shorter than 10 characters!";
+            }
+
+        }
+        else if (this.state.touched.firstname && this.state.firstname !== "") {
+            error_messages.firstname = "First Name can only contain letters!";
+        }
+
+        if (this.state.touched.lastname && name_re.test(lastname)) {
+            if (this.state.touched.lastname && lastname.length < 2) {
+                error_messages.lastname = "Last Name must be at least 2 characters long!";
+            }
+            else if (this.state.touched.lastname && lastname.length > 20) {
+                error_messages.lastname = "Last Name must be shorter than 20 characters!";
+            }
+        }
+        else if (this.state.touched.lastname && this.state.lastname !== "") {
+            error_messages.lastname = "Last Name can only contain letters!";
+        }
+
+
+        /* VALIDATION OF TELEPHONE */
+
+        if (this.state.touched.phone && !phone_re.test(phone)) {
+            error_messages.phone = "Telephone can only contain numbers!";
+        }
+
+
+        /* VALIDATION OF E-MAIL */
+
+        if (this.state.touched.email) {
+            if (email.split('').filter(x => x === '@').length !== 1) {
+                error_messages.email = "E-Mail must contain one @ symbol!";
+            }
+            else if (email.split('').filter(x => x === '.').length < 1) {
+                error_messages.email = "E-Mail must contain at least one . symbol!";
+            }
+        }
+
+        return error_messages;
+    }
+
     render() {
 
         /* React Forms @ https://reactjs.org/docs/forms.html ...
@@ -71,6 +160,11 @@ class Contact extends Component {
         
         ONCHANGE attr is processing sync between values of components and of props of the state of the Contact component by passing a React (not Reactstrap!) event object OnChange to the handler method handleInputChange
         */
+
+        const errors_data = this.validate_inputs(this.state.firstname, this.state.lastname, this.state.phone, this.state.email);
+        // The component function is called in the render() since the form is getting rerendered anytime a user enters a new symbol into any input. It recieves the current values of all 4 inputs from the component state as params
+        // errors_data will contain the error strings for any input with a failed validation and is displayed a corresponding error message in the FormFeedback Reactstrap components (are displyed under the input field). 
+        // It is also used to set values of VALID and INVALID attrs for each input based on if the err message is empty or not
 
         return (
             <div className="container">
@@ -127,7 +221,11 @@ class Contact extends Component {
                                             name='firstname'
                                             placeholder='First Name'
                                             value={this.state.firstname}
-                                            onChange={this.handleInputChange} />
+                                            onChange={this.handleInputChange}
+                                            onBlur={this.handleBlur('firstname')}
+                                            valid={errors_data.firstname === ''}
+                                            invalid={errors_data.firstname !== ''} />
+                                        <FormFeedback>{errors_data.firstname}</FormFeedback>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
@@ -138,7 +236,11 @@ class Contact extends Component {
                                             name='lastname'
                                             placeholder='Last Name'
                                             value={this.state.lastname}
-                                            onChange={this.handleInputChange} />
+                                            onChange={this.handleInputChange}
+                                            onBlur={this.handleBlur('lastname')}
+                                            valid={errors_data.lastname === ''}
+                                            invalid={errors_data.lastname !== ''} />
+                                        <FormFeedback>{errors_data.lastname}</FormFeedback>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
@@ -149,7 +251,11 @@ class Contact extends Component {
                                             name='phone'
                                             placeholder='Phone Number'
                                             value={this.state.phone}
-                                            onChange={this.handleInputChange} />
+                                            onChange={this.handleInputChange}
+                                            onBlur={this.handleBlur('phone')}
+                                            valid={errors_data.phone === ''}
+                                            invalid={errors_data.phone !== ''} />
+                                        <FormFeedback>{errors_data.phone}</FormFeedback>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
@@ -160,7 +266,11 @@ class Contact extends Component {
                                             name='email'
                                             placeholder='E-Mail Address'
                                             value={this.state.email}
-                                            onChange={this.handleInputChange} />
+                                            onChange={this.handleInputChange}
+                                            onBlur={this.handleBlur('email')}
+                                            valid={errors_data.email === ''}
+                                            invalid={errors_data.email !== ''} />
+                                        <FormFeedback>{errors_data.email}</FormFeedback>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
