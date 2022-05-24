@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Navbar, NavbarBrand, Nav, NavbarToggler, Collapse, NavItem } from 'reactstrap';
+import { Navbar, NavbarBrand, Nav, NavbarToggler, Collapse, NavItem, Modal, Button, ModalHeader, ModalBody, Form, FormGroup, Label, Input } from 'reactstrap';
 // Jumbotron component is removed from Bootstrap 5. Replaced it with a div. See @ https://getbootstrap.com/docs/5.0/migration/#jumbotron
 import { NavLink } from 'react-router-dom';
 // NavLink applies a tag to a link and sets it as active if the link matches a current URL in browser
@@ -9,9 +9,12 @@ class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isNavOpen: false
+            isNavOpen: false,
+            isModalOpen: false
         };
-        this.toggleNav = this.toggleNav.bind(this)
+        this.toggleNav = this.toggleNav.bind(this);
+        this.toggleModal = this.toggleModal.bind(this);
+        this.handleLogin = this.handleLogin.bind(this)
     }
     // .bind() is a built in MEthod for class components to pass data to the functions of a class. Takes THIS + an object of any other data as args. An alternative to pass a function as a value of JAX elements props without using an arrow function. See @ https://www.geeksforgeeks.org/reactjs-bind-method/
 
@@ -20,6 +23,18 @@ class Header extends Component {
         this.setState({
             isNavOpen: !this.state.isNavOpen
         })
+    }
+
+    toggleModal() {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        })
+    }
+
+    handleLogin(event) {
+        event.preventDefault();
+        this.toggleModal();
+        alert("Submitting the following information: Username: " + this.username.value + " Password: " + this.password.value + " Keep me signed in: " + this.remember.value);
     }
 
     render() {
@@ -33,6 +48,8 @@ class Header extends Component {
 
         // expand="md" prop of NavBar means the NavBar is loaded in expanded mode only for medium to extra lardge displays
         // ! The elements that are to be collapsed have to be wrapped inside of the Collapsable component !
+
+        // innerRef attr of the Inputs is used to set a value to the original <input> HTML elements (JS HTMLInputElement https://developer.mozilla.org/de/docs/Web/API/HTMLInputElement). This way the form is set as uncontrolled and operates it's state separate from the header component. See more @ https://redd.gitbook.io/react-advanced-form/architecture/referencing#inner-reference
         return (
             <React.Fragment>
                 <Navbar dark expand="md">
@@ -42,7 +59,7 @@ class Header extends Component {
                             <img src="assets/images/logo.png" height="30" width="41" alt="Ristorante Con Fusion" />
                         </NavbarBrand>
                         <Collapse navbar>
-                            <Nav navbar isOpen={this.state.isNavOpen}>
+                            <Nav navbar isOpen={this.state.isNavOpen} className="me-auto">
                                 <NavItem>
                                     <NavLink className="nav-link" to='/home'>
                                         <span className="fa fa-home fa-lg"></span>
@@ -68,6 +85,13 @@ class Header extends Component {
                                     </NavLink>
                                 </NavItem>
                             </Nav>
+                            <Nav className="ml-auto" navbar>
+                                <NavItem>
+                                    <Button outline onClick={this.toggleModal} color="light">
+                                        <span className="fa fa-sign-in fa-lg"> Login</span>
+                                    </Button>
+                                </NavItem>
+                            </Nav>
                         </Collapse>
 
                     </div>
@@ -82,6 +106,32 @@ class Header extends Component {
                         </div>
                     </div>
                 </div>
+                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+                    <ModalHeader toggle={this.toggleModal}>
+                        Login
+                    </ModalHeader>
+                    <ModalBody>
+                        <Form onSubmit={this.handleLogin}>
+                            <FormGroup>
+                                <Label htmlFor="username">Username</Label>
+                                <Input type="text" id="username" name="username"
+                                innerRef={(input) => this.username = input} />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label htmlFor="password">Password</Label>
+                                <Input type="password" id="password" name="password"
+                                innerRef={(input) => this.password = input} />
+                            </FormGroup>
+                            <FormGroup check>
+                                <Label check>
+                                    <Input type="checkbox" name="remember" 
+                                    innerRef={(input) => this.remember = input} />Keep me signed in
+                                </Label>
+                            </FormGroup>
+                            <Button type="submit" value="submit" color="primary">Login</Button>
+                        </Form>
+                    </ModalBody>
+                </Modal>
             </React.Fragment>
         );
     }

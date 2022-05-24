@@ -48,7 +48,14 @@ class Contact extends Component {
         const inputName = targetInput.name; // get a defined name of the Input. In the project the names of the inputs are matched to the props of the state object of the Contact component
 
         this.setState({
-            [inputName]: inputValue  // ??? why the inpuName var is set here as a const in []? For direct props adressing, f.e. in Header, we just set them by the name 
+            [inputName]: inputValue  
+            // !!! [inputName] is a COMPUTED PROPERTY SYNTAX from ES6 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#computed_property_names) used to update the state key corresponding to the given input name. For direct props adressing, f.e. in HeaderCOmponent, we just set the name of a prop here. 
+            /* It is equivalent to this ES5 code:
+                var partialState = {};
+                partialState[name] = value;
+                this.setState(partialState);
+            */
+            // The handler function operates the const to find a component with the same NAME attr in case of multiple controlled inputs. See @ https://reactjs.org/docs/forms.html#handling-multiple-inputs. Since setState() automatically merges a partial state into the current state, we only needed to call it with the changed parts also here.
         });
 
         // console.log(JSON.stringify(this.state))  // ??? Why is this line showing a prev value of the state object inspite of .setState?
@@ -166,7 +173,7 @@ class Contact extends Component {
         // errors_data will contain the error strings for any input with a failed validation and is displayed a corresponding error message in the FormFeedback Reactstrap components (are displyed under the input field). 
         // It is also used to set values of VALID and INVALID attrs for each input based on if the err message is empty or not
 
-        // Controlled components - here are f.e. the first 4 inputs of the form. They receive their value from the state of the component (Single Source of truth principle) as f.e. value={this.state.firstname}. With a controlled component, the input’s value is always driven by the React state. While this means you have to type a bit more code, you can now pass the value to other UI elements too, or reset it from other event handlers.
+        // Controlled components - here are f.e. the first 4 inputs of the form. They receive their value from the state of the component (Single Source of truth principle) as f.e. value={this.state.firstname}. With a controlled component, the input’s value is always driven by the React state. While this means you have to type a bit more code, you can now pass the value to other UI elements too, or reset it from other event handlers. It’s called a one-way binding because only state  changes views. There’s no trip back, only a one-way trip from state to view. With one-way binding, a library won’t update state (or model) automatically. One of the main benefits of one-way binding is that it removes complexity when working with large apps where many views can implicitly update many states (data models) and vice versa
 
         return (
             <div className="container">
