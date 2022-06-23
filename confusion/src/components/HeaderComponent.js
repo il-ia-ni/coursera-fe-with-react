@@ -49,7 +49,7 @@ class Header extends Component {
         // expand="md" prop of NavBar means the NavBar is loaded in expanded mode only for medium to extra lardge displays
         // ! The elements that are to be collapsed have to be wrapped inside of the Collapsable component !
 
-        // innerRef attr of the Inputs is used to set a value to the original <input> HTML elements (JS HTMLInputElement https://developer.mozilla.org/de/docs/Web/API/HTMLInputElement). This way the form is set as uncontrolled and operates it's state separate from the header component. See more @ https://redd.gitbook.io/react-advanced-form/architecture/referencing#inner-reference
+        // innerRef attr of the Inputs (https://redd.gitbook.io/react-advanced-form/architecture/referencing#inner-reference) is used to set a value to the original <input> HTML elements (are represented throught rhe JS HTMLInputElement object: https://developer.mozilla.org/de/docs/Web/API/HTMLInputElement). This way the form is set as uncontrolled and operates it's state separate from the header component. See more @ https://reactjs.org/docs/uncontrolled-components.html and @ https://reactjs.org/docs/refs-and-the-dom.html 
         return (
             <React.Fragment>
                 <Navbar dark expand="md">

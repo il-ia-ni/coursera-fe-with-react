@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { Routes, Route, Navigate, useParams } from 'react-router-dom';  // withRouter is depriciated in v6, see import below!
+import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 // In V6 of react-router-dom Routes replaced Switch as a more powerful alternative. See @ https://reactrouter.com/docs/en/v6/upgrading/v5#upgrade-all-switch-elements-to-routes
 // In V6 of react-router-dom Redirect is removed. Navigate component is an alternative. See @ https://reactrouter.com/docs/en/v6/upgrading/v5#remove-redirects-inside-switch
-import { withRouter } from '../redux/configureStore';  // This withRouter-replacement enables a router for Redex-connected components! withRouter Higher Components is depreciated in react-router-dom v6. Found @ https://stackoverflow.com/questions/64782949/how-to-pass-params-into-link-using-react-router-v6 and @ https://github.com/remix-run/react-router/issues/7156
-import { connect } from 'react-redux';  // a wrapper container for React components to enable access to the Redux Store. 
 
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
@@ -13,17 +11,10 @@ import Menu from './MenuComponent';
 import Contact from './ContactComponent';
 
 import DishDetail from './DishdetailComponent';
-
-const mapStateToProps = state => {
-    // connects an object of values from the Redux store as a PROP of the Main component. IS used to replace the previous local state of the Main component. Connection is done in the "export default-statement" at the end of the script.
-    // All "this.state.x" references in the code of the Main component-class must also be updated to "this.props.x"!
-    return {
-        dishes: state.dishes,
-        comments: state.comments,
-        promotions: state.promotions,
-        leaders: state.leaders,
-    }
-}
+import { COMMENTS } from '../shared/comments';
+import { DISHES } from '../shared/dishes';
+import { LEADERS } from '../shared/leaders';
+import { PROMOTIONS } from '../shared/promotions';
 
 class Main extends Component {
     /* Main class component for storing the datas of the SPA in a state and rendering the whole SPA by using React Router (activated in App.js by using BrowserRouter component!) to manage navigation between the views
@@ -35,6 +26,12 @@ class Main extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            comments: COMMENTS,
+            dishes: DISHES,
+            leaders: LEADERS,
+            promotions: PROMOTIONS,
+        };
     }
 
     render() {
@@ -47,9 +44,9 @@ class Main extends Component {
         */
         const HomePage = () => {
             return (
-                <Home dish={this.props.dishes.filter((dish) => dish.featured)[0]}
-                    leader={this.props.leaders.filter((leader) => leader.featured)[0]}
-                    promotion={this.props.promotions.filter((promotion) => promotion.featured)[0]}
+                <Home dish={this.state.dishes.filter((dish) => dish.featured)[0]}
+                    leader={this.state.leaders.filter((leader) => leader.featured)[0]}
+                    promotion={this.state.promotions.filter((promotion) => promotion.featured)[0]}
                 />
             );
         }
@@ -70,8 +67,8 @@ class Main extends Component {
             The same is done for the comments props of the DishDetail
             */
             return (
-                <DishDetail selectedDish={this.props.dishes.filter((dish) => dish.id === parseInt(dishId, 10))[0]}
-                    comments={this.props.comments.filter((comment) => comment.dishId === parseInt(dishId, 10))}
+                <DishDetail selectedDish={this.state.dishes.filter((dish) => dish.id === parseInt(dishId, 10))[0]}
+                    comments={this.state.comments.filter((comment) => comment.dishId === parseInt(dishId, 10))}
                 />
             );
         }
@@ -117,8 +114,8 @@ class Main extends Component {
                 <Routes>
                     <Route path='*' element={<Navigate replace to="/home" />} />
                     <Route path='/home' element={<HomePage />} />
-                    <Route path='/aboutus/' element={<AboutUs leaders={this.props.leaders}/>} />
-                    <Route exact path='/menu' element={<Menu dishes={this.props.dishes} />} />
+                    <Route path='/aboutus/' element={<AboutUs leaders={this.state.leaders}/>} />
+                    <Route exact path='/menu' element={<Menu dishes={this.state.dishes} />} />
                     <Route path='/menu/:dishId' element={<DishWithId />} />
                     <Route exact path='/contactus' element={<Contact />} />
                 </Routes>
@@ -128,5 +125,4 @@ class Main extends Component {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(Main));  // ??? syntax to connect props of the Main component to the state from the Redux Store
-// withRouter method is used to enable the React Router navigation through a SPA components with a Redux state
+export default Main;
