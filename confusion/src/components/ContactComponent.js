@@ -8,6 +8,19 @@ import { Breadcrumb, BreadcrumbItem, Button, Label, Col, Row } from 'reactstrap'
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 
+/* 
+Validation Functions Area for React-Redux-Form validation 
+- validating functions are submitted inside of an object to the -validators-attr of a specific Control-component of the LocalForm and receive its value as their param (see @ https://davidkpiano.github.io/react-redux-form/docs/api/Control.html#prop-validators). If any validation was not successful, onSubmit-attr of the LocalForm is deactivated!
+- they are are also defining if the Errors-component (see @ https://davidkpiano.github.io/react-redux-form/docs/api/Errors.html) is displayed for the (touched / modified by user) input with specified messages for each validator
+- Control and Errors components are synced through the -model-attr connected to the Model in the Redux Store!
+*/
+const requiredHasValue = (val) => val && val.length;  // a simple function to prove if a required input has a value
+const isMaxLength = (len) => (val) => !(val) || (val.length <= len);  // a function-in-function to check if the input value has no value (is '') or is smaller than the maximal allowed value "len"
+const isMinLength = (len) => (val) => (val) && (val.length >= len);  // a function-in-function to check if the input value has a value (is not '') or is bigger than the minimal allowed value "len"
+const isNumber = (val) => !isNaN(Number(val));  // a simple validation to prove if the value is numeric (can be converted to the Number type)
+const mailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;  // see comments in ContactComponent_archive_controlled.js
+const isValidEmail = (val) => mailRegex.test(val);  // a validation of a string to match the regex of an email address
+
 class Contact extends Component {
     /* Class component to render Bootstrap Breadcrump structure and all contents of the Contact Us view in a Bootstrap formatting 
     Changed from a func component in M3 in order to control forms data in the state of the component */
@@ -103,6 +116,21 @@ class Contact extends Component {
                                             id='firstname'
                                             name='firstname'
                                             placeholder='First Name'
+                                            validators={{
+                                                requiredHasValue,
+                                                isMaxLength: isMaxLength(20),
+                                                isMinLength: isMinLength(3)
+                                            }}
+                                        />
+                                        <Errors 
+                                            className='text-danger'
+                                            model='.firstname'
+                                            show={(field) => field.touched && !field.focus}
+                                            messages={{
+                                                requiredHasValue: 'The field is required! Please enter the value. ',
+                                                isMaxLength: "The value must not be longer than 20 characters! ",
+                                                isMinLength: "The value must contain at least 3 characters! "
+                                            }}
                                         />
                                     </Col>
                                 </Row>
@@ -115,6 +143,21 @@ class Contact extends Component {
                                             id='lastname'
                                             name='lastname'
                                             placeholder='Last Name'
+                                            validators={{
+                                                requiredHasValue,
+                                                isMaxLength: isMaxLength(20),
+                                                isMinLength: isMinLength(3)
+                                            }}
+                                        />
+                                        <Errors 
+                                            className='text-danger'
+                                            model='.lastname'
+                                            show={{touched: true, focus: false}}
+                                            messages={{
+                                                requiredHasValue: 'The field is required! Please enter the value. ',
+                                                isMaxLength: "The value must not be longer than 20 characters! ",
+                                                isMinLength: "The value must contain at least 3 characters! "
+                                            }}
                                         />
                                     </Col>
                                 </Row>
@@ -127,6 +170,23 @@ class Contact extends Component {
                                             id='phone'
                                             name='phone'
                                             placeholder='Phone Number'
+                                            validators={{
+                                                requiredHasValue,
+                                                isNumber,
+                                                isMaxLength: isMaxLength(18),
+                                                isMinLength: isMinLength(10)
+                                            }}
+                                        />
+                                        <Errors 
+                                            className='text-danger'
+                                            model='.phone'
+                                            show={{touched: true, focus: false}}
+                                            messages={{
+                                                requiredHasValue: 'The field is required! Please enter the value. ',
+                                                isNumber: "Only numbers are allowed! ",
+                                                isMaxLength: "The value must not be longer than 18 characters! ",
+                                                isMinLength: "The value must contain at least 10 characters! "
+                                            }}
                                         />
                                     </Col>
                                 </Row>
@@ -139,6 +199,19 @@ class Contact extends Component {
                                             id='email'
                                             name='email'
                                             placeholder='E-Mail Address'
+                                            validators={{
+                                                requiredHasValue,
+                                                isValidEmail
+                                            }}
+                                        />
+                                        <Errors 
+                                            className='text-danger'
+                                            model='.email'
+                                            show={{touched: true, focus: false}}
+                                            messages={{
+                                                requiredHasValue: 'The field is required! Please enter the value. ',
+                                                isValidEmail: (val) => `${val} is not a valid email address.`,
+                                            }}
                                         />
                                     </Col>
                                 </Row>

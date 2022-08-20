@@ -100,7 +100,7 @@ class Contact extends Component {
         // "i" is the case-insensitive flag, there's no need for the extra character range A-Z. See @ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
 
         const phone_re = /^\d+$/;
-        // RegEx for only numbers are allowed. "/^"" is a Circumflex-symbol for the start of the input !== "[^...]". In square brackets "^" means negation of the pattern!
+        // RegEx for only numbers permitted. "/^"" is a Circumflex-symbol for the start of the string pattern and !== "[^...]". In square brackets "^" means negation of the pattern!
 
 
         /* VALIDATION OF FIRST AND LAST NAMES */
