@@ -1,156 +1,38 @@
 import React, { Component } from 'react';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback } from 'reactstrap';
-import { Link } from 'react-router-dom'
+import { Breadcrumb, BreadcrumbItem, Button, Label, Col, Row } from 'reactstrap';  /* Form, FormGroup, Input, FormFeedback components are no longer needed due to switch to the Reacr-Redux-Form. Therefore: 
+- Input with type-attr are replaced with the --Control.[type] model=".idname"-- component of React-Redux-Form (see @ https://davidkpiano.github.io/react-redux-form/docs/api/Control.html) with applied bootstrap 5-styling classes "form-control", "form-check-input" or "form-select" (see @ https://getbootstrap.com/docs/5.0/forms/overview/ )
+    model=".idname" attr of Control adds a value of an input into the LocalForm model in the Redux Store (see handleSubmit())
+    Input attrs -value-, -onChange-, -onBlur-, -valid- and -invalid- (as well as -check- for check-inputs) are also no longer used directly and are controlled by React-Redux-Form
+- FormGroup is replaced with the Row components of reactstrap with react classes 'input-group mb-3' ('form-group' cls from the course is removed in Bootstrap 5) OR with div containers with bootstrap-class 'form-check'
+- FormFeedback is replaced with React-Redux validation */
+import { Link } from 'react-router-dom';
+import { Control, LocalForm, Errors } from 'react-redux-form';
 
 class Contact extends Component {
     /* Class component to render Bootstrap Breadcrump structure and all contents of the Contact Us view in a Bootstrap formatting 
     Changed from a func component in M3 in order to control forms data in the state of the component */
 
-    // Validation should only be executed for the forms modified by user, that's why a bool-operation object TOUCHED is introduced in the component's state.
-
     constructor(props) {
         super(props);
-        this.state = {
-            firstname: '',
-            lastname: '',
-            phone: '',
-            email: '',
-            isAgreed: false,
-            prefContact: 'Tel.',
-            message: '',
-            touched: {
-                firstname: false,
-                lastname: false,
-                phone: false,
-                email: false
-            }
-        };
+        // the states of the form inputs are no longer stored in the components constructor due to the switch to React-Redux-Form, wehre they are kept in the Model of the LocalForm
+        // handleInputChange static method is also no longer needed, as React-Redux-Form manages the inputs
+        // handelBlur method is also no longer needed, React-Redux-Form controls which inputs has been modified by user
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleBlur = this.handleBlur.bind(this);
     }
     // .bind() is a built in Method for class components to pass data to the functions of a class. Takes THIS + an object of any other data as args. An alternative to pass a function as a value of JAX elements props without using an arrow function. See @ https://www.geeksforgeeks.org/reactjs-bind-method/
 
-    handleInputChange(event) {
+    handleSubmit(values) {
         /* 
-        A static handler method binded to the data of the Contact component and used to tie props of the state of the Contact component with values of corresponding Inputs of the Form over the names of the inputs (implemented over onChange attr of Input components). The method is called anytime an inputs value get changed by a user and updates the value of a corresponding state attribute.
+        An updated handler method binded to the LocalForm values stored the Redux store (eralier it was bound to the Contact components state, that stored all the form data)
         props: 
-            event: React onChange event object called by a target input (JSX component). Raised everytime a user tips in inputs
+            values:  Control components values received from the React-Redux-Form LocalForm component. Values are stored in a MODEL under a specified input name (see -model='.name'-attr of each Control)
         */
-
-        // console.log(event)
-        // console.log(event.target)
-
-        let targetInput = event.target  // e.target returns a JSX component with its current attrs at the moment of the event e taking place. Cannot be set as a value of a CONST!
-
-        const inputValue = (targetInput.type === 'checkbox') ? targetInput.checked : targetInput.value;  // if the target input is checkbox set a bool value from .checked method, otherwise a str value from .value method
-
-        const inputName = targetInput.name; // get a defined name of the Input. In the project the names of the inputs are matched to the props of the state object of the Contact component
-
-        this.setState({
-            [inputName]: inputValue  
-            // !!! [inputName] is a COMPUTED PROPERTY SYNTAX from ES6 (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#computed_property_names) used to update the state key corresponding to the given input name. For direct props adressing, f.e. in HeaderCOmponent, we just set the name of a prop here. 
-            /* It is equivalent to this ES5 code:
-                var partialState = {};
-                partialState[name] = value;
-                this.setState(partialState);
-            */
-            // The handler function operates the const to find a component with the same NAME attr in case of multiple controlled inputs. See @ https://reactjs.org/docs/forms.html#handling-multiple-inputs. Since setState() automatically merges a partial state into the current state, we only needed to call it with the changed parts also here.
-        });
-
-        // console.log(JSON.stringify(this.state))  // ??? Why is this line showing a prev value of the state object inspite of .setState?
+        console.log("Current submitted State of the Form is: " + JSON.stringify(values))
+        alert("Current submitted State of the Form is: " + JSON.stringify(values))
+        // event.preventDefault() is no longer needed
     }
 
-    handleSubmit(event) {
-        /* 
-        A handler method binded to the data of the Contact component to process the onSubmit events called in Form Components 
-        props: 
-            event: React onSubmit event object called by a target (JSX component) 
-        */
-        console.log("Current submitted State of the Form is: " + JSON.stringify(this.state))
-        alert("Current submitted State of the Form is: " + JSON.stringify(this.state))
-        event.preventDefault();  // deactivate reloading the page on submit of the form
-    }
-
-    handleBlur = (field) => (evt) => {
-        /* Handler function for the OnBlur event that is invoked for any Input component ("field") whenever anything gets changed in ut by user 
-        params: 
-            field: a string with a name of the field as set in the state of the component 
-        */
-        this.setState({
-            touched: { ...this.state.touched, [field]: true } // ??? Crumbread means: Whatever current state is / whichever input was modified, modify only a particular field in it
-        });
-    }
-
-    validate_inputs(firstname, lastname, phone, email) {
-        /* The function validating the values of the "blured" inputs (touched by user)
-        Receives current input values of 4 attr in the state of the component
-        Is called in the render() Method of the component since the form is getting rerendered anytime a user enters a new symbol into any input 
-        Is also used to set true / false for VALID and INVALID attributes of each imput based on if the error message is empty or not*/
-
-        const error_messages = {
-            firstname: '',
-            lastname: '',
-            phone: '',
-            email: '',
-        };
-
-        const name_re = /^[a-z]+$/i;
-        // RegEx in JS: https://developer.mozilla.org/de/docs/Web/JavaScript/Guide/Regular_Expressions
-        // "i" is the case-insensitive flag, there's no need for the extra character range A-Z. See @ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
-
-        const phone_re = /^\d+$/;
-        // RegEx for only numbers are allowed. "/^"" is a Circumflex-symbol for the start of the input !== "[^...]". In square brackets "^" means negation of the pattern!
-
-
-        /* VALIDATION OF FIRST AND LAST NAMES */
-
-        if (this.state.touched.firstname && name_re.test(firstname)) {
-            if (this.state.touched.firstname && firstname.length < 3) {
-                error_messages.firstname = "First Name must be at least 3 characters long!";
-            }
-            else if (this.state.touched.firstname && firstname.length > 10) {
-                error_messages.firstname = "First Name must be shorter than 10 characters!";
-            }
-
-        }
-        else if (this.state.touched.firstname && this.state.firstname !== "") {
-            error_messages.firstname = "First Name can only contain letters!";
-        }
-
-        if (this.state.touched.lastname && name_re.test(lastname)) {
-            if (this.state.touched.lastname && lastname.length < 2) {
-                error_messages.lastname = "Last Name must be at least 2 characters long!";
-            }
-            else if (this.state.touched.lastname && lastname.length > 20) {
-                error_messages.lastname = "Last Name must be shorter than 20 characters!";
-            }
-        }
-        else if (this.state.touched.lastname && this.state.lastname !== "") {
-            error_messages.lastname = "Last Name can only contain letters!";
-        }
-
-
-        /* VALIDATION OF TELEPHONE */
-
-        if (this.state.touched.phone && !phone_re.test(phone)) {
-            error_messages.phone = "Telephone can only contain numbers!";
-        }
-
-
-        /* VALIDATION OF E-MAIL */
-
-        if (this.state.touched.email) {
-            if (email.split('').filter(x => x === '@').length !== 1) {
-                error_messages.email = "E-Mail must contain one @ symbol!";
-            }
-            else if (email.split('').filter(x => x === '.').length < 1) {
-                error_messages.email = "E-Mail must contain at least one . symbol!";
-            }
-        }
-
-        return error_messages;
-    }
+    // validate-inputs() method returning upon validation an errors object for the inputs valid- and invalid-attributes as well as for the FormFeedback component is also no longer needed, as React-Redux-Form has its own validation built-in
 
     render() {
 
@@ -163,17 +45,7 @@ class Contact extends Component {
         
         Col Bootstrap component is like a div container for a form
         
-        VALUE attr of the Input component linked to the state of the class component creates controlling over the form's input's value: the value of a state attr and of the input are synced! Tiying the input as the value of the state attr is done using a handler function: handleInputChange
-        
-        ONCHANGE attr is processing sync between values of components and of props of the state of the Contact component by passing a React (not Reactstrap!) event object OnChange to the handler method handleInputChange
         */
-
-        const errors_data = this.validate_inputs(this.state.firstname, this.state.lastname, this.state.phone, this.state.email);
-        // The component function is called in the render() since the form is getting rerendered anytime a user enters a new symbol into any input. It recieves the current values of all 4 inputs from the component state as params
-        // errors_data will contain the error strings for any input with a failed validation and is displayed a corresponding error message in the FormFeedback Reactstrap components (are displyed under the input field). 
-        // It is also used to set values of VALID and INVALID attrs for each input based on if the err message is empty or not
-
-        // Controlled components - here are f.e. the first 4 inputs of the form. They receive their value from the state of the component (Single Source of truth principle) as f.e. value={this.state.firstname}. With a controlled component, the input’s value is always driven by the React state. While this means you have to type a bit more code, you can now pass the value to other UI elements too, or reset it from other event handlers. It’s called a one-way binding because only state  changes views. There’s no trip back, only a one-way trip from state to view. With one-way binding, a library won’t update state (or model) automatically. One of the main benefits of one-way binding is that it removes complexity when working with large apps where many views can implicitly update many states (data models) and vice versa
 
         return (
             <div className="container">
@@ -221,109 +93,98 @@ class Contact extends Component {
                     <div className='col-12'>
                         <h3 className='mb-5'>Send us Your Feedback</h3>
                         <div className='col-12 col-md-9'>
-                            <Form onSubmit={this.handleSubmit}>
-                                <FormGroup row>
+                            <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+                                <Row className="input-group mb-3">
                                     <Label htmlFor='firstname' md={2}>First Name</Label>
                                     <Col md={10}>
-                                        <Input type='text'
+                                        <Control.text
+                                            className='form-control'
+                                            model='.firstname'
                                             id='firstname'
                                             name='firstname'
                                             placeholder='First Name'
-                                            value={this.state.firstname}
-                                            onChange={this.handleInputChange}
-                                            onBlur={this.handleBlur('firstname')}
-                                            valid={errors_data.firstname === ''}
-                                            invalid={errors_data.firstname !== ''} />
-                                        <FormFeedback>{errors_data.firstname}</FormFeedback>
+                                        />
                                     </Col>
-                                </FormGroup>
-                                <FormGroup row>
+                                </Row>
+                                <Row className="input-group mb-3">
                                     <Label htmlFor='lastname' md={2}>Last Name</Label>
                                     <Col md={10}>
-                                        <Input type='text'
+                                        <Control.text
+                                            className='form-control'
+                                            model='.lastname'
                                             id='lastname'
                                             name='lastname'
                                             placeholder='Last Name'
-                                            value={this.state.lastname}
-                                            onChange={this.handleInputChange}
-                                            onBlur={this.handleBlur('lastname')}
-                                            valid={errors_data.lastname === ''}
-                                            invalid={errors_data.lastname !== ''} />
-                                        <FormFeedback>{errors_data.lastname}</FormFeedback>
+                                        />
                                     </Col>
-                                </FormGroup>
-                                <FormGroup row>
+                                </Row>
+                                <Row className="input-group mb-3">
                                     <Label htmlFor='phone' md={2}>Phone</Label>
                                     <Col md={10}>
-                                        <Input type='text'
+                                        <Control.text
+                                            className='form-control'
+                                            model='.phone'
                                             id='phone'
                                             name='phone'
                                             placeholder='Phone Number'
-                                            value={this.state.phone}
-                                            onChange={this.handleInputChange}
-                                            onBlur={this.handleBlur('phone')}
-                                            valid={errors_data.phone === ''}
-                                            invalid={errors_data.phone !== ''} />
-                                        <FormFeedback>{errors_data.phone}</FormFeedback>
+                                        />
                                     </Col>
-                                </FormGroup>
-                                <FormGroup row>
+                                </Row>
+                                <Row className="input-group mb-3">
                                     <Label htmlFor='email' md={2}>E-Mail</Label>
                                     <Col md={10}>
-                                        <Input type='text'
+                                        <Control.text
+                                            className='form-control'
+                                            model='.email'
                                             id='email'
                                             name='email'
                                             placeholder='E-Mail Address'
-                                            value={this.state.email}
-                                            onChange={this.handleInputChange}
-                                            onBlur={this.handleBlur('email')}
-                                            valid={errors_data.email === ''}
-                                            invalid={errors_data.email !== ''} />
-                                        <FormFeedback>{errors_data.email}</FormFeedback>
+                                        />
                                     </Col>
-                                </FormGroup>
-                                <FormGroup row>
+                                </Row>
+                                <Row className="input-group mb-3">
                                     <Col md={{ size: 6, offset: 2 }}>
-                                        <FormGroup check>
+                                        <div className='form-check'>
                                             <Label check>
-                                                <Input
-                                                    type='checkbox'
+                                                <Control.checkbox
+                                                    className='form-check-input'
+                                                    model='.isAgreed'
                                                     name='isAgreed'
-                                                    checked={this.state.isAgreed}
-                                                    onChange={this.handleInputChange} />
+                                                />
                                                 {' '}
                                                 <strong>Would you like us to contact you?</strong>
                                             </Label>
-                                        </FormGroup>
+                                        </div>
                                     </Col>
                                     <Col md={{ size: 3, offset: 1 }}>
-                                        <Input
-                                            type='select'
+                                        <Control.select
+                                            className='form-select'
+                                            model='.contactType'
                                             name='prefContact'
-                                            value={this.state.prefContact}
-                                            onChange={this.handleInputChange} >
+                                        >
                                             <option>Telephone</option>
                                             <option>E-Mail</option>
-                                        </Input>
+                                        </Control.select>
                                     </Col>
-                                </FormGroup>
-                                <FormGroup row>
+                                </Row>
+                                <Row className="input-group mb-3">
                                     <Label htmlFor='message' md={2}>Your feedback message</Label>
                                     <Col md={10}>
-                                        <Input type='textarea'
+                                        <Control.textarea
+                                            className='form-control'
+                                            model='.message'
                                             id='message'
                                             name='message'
                                             rows='12'
-                                            value={this.state.message}
-                                            onChange={this.handleInputChange} />
+                                        />
                                     </Col>
-                                </FormGroup>
-                                <FormGroup row>
+                                </Row>
+                                <Row className="input-group mb-3">
                                     <Col md={{ size: 10, offset: 2 }}>
                                         <Button type='submit' color='primary'>Send feedback</Button>
                                     </Col>
-                                </FormGroup>
-                            </Form>
+                                </Row>
+                            </LocalForm>
                         </div>
                     </div>
                 </div>
