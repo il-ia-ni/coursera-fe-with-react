@@ -12,11 +12,17 @@ import AboutUs from './AboutUsComponent';
 import Menu from './MenuComponent';
 import Contact from './ContactComponent';
 
+import { addComment } from '../redux/ActionCreators';
 import DishDetail from './DishdetailComponent';
 
+
+/* AREA of Redux tools to be connected to the Main component of the app 
+Connection is done in the "export default..." at the end of the script using the react-redux connect-Method*/
+
 const mapStateToProps = state => {
-    // connects an object of values from the Redux store as a PROP of the Main component. IS used to replace the previous local state of the Main component. Connection is done in the "export default-statement" at the end of the script.
+    // connects an object of values from the Redux store as a PROP of the Main component. Is used to replace the previous local state of the Main component. ??? State vs PROP of a React component
     // All "this.state.x" references in the code of the Main component-class must also be updated to "this.props.x"!
+
     return {
         dishes: state.dishes,
         comments: state.comments,
@@ -24,6 +30,17 @@ const mapStateToProps = state => {
         leaders: state.leaders,
     }
 }
+
+const mapDispatchToProps = (dispatch) => ({
+    /* creates an action object of type ADD_COMMENT 
+    gives the object to a dipatcher function (Connect-method of react-redux in the export of the Main component) */
+
+
+    addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment))  // the function creating an action object is implemented as an attr of a rendered helper component DishWithId below, where the action gets dispatched to the Redux Store
+})
+
+
+/* AREA of Components */
 
 class Main extends Component {
     /* Main class component for storing the datas of the SPA in a state and rendering the whole SPA by using React Router (activated in App.js by using BrowserRouter component!) to manage navigation between the views
@@ -68,10 +85,17 @@ class Main extends Component {
             /* Parametrizing the DishDetail component with a matched parameter of the Dynamic Segment dishId...
             selectedDish prop of the DishDetail component filters an array of dish objects using an arrow function that compares equalty of id of each dish with a converted to a base-10 Integer (See @ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt) dishId token from the URL received by a Router. Base 10 is a Radix of a decimal system with 10 numbers (0-9): see @ https://en.wikipedia.org/wiki/Radix
             The same is done for the comments props of the DishDetail
+            NEW: adds a function addComment to the component to create action objects of ADD_COMMENT type that add a new comment vased on the data received from user
             */
             return (
-                <DishDetail selectedDish={this.props.dishes.filter((dish) => dish.id === parseInt(dishId, 10))[0]}
-                    comments={this.props.comments.filter((comment) => comment.dishId === parseInt(dishId, 10))}
+                <DishDetail
+                    selectedDish={
+                        this.props.dishes.filter((dish) => dish.id === parseInt(dishId, 10))[0]
+                    }
+                    comments={
+                        this.props.comments.filter((comment) => comment.dishId === parseInt(dishId, 10))
+                    }
+                    addComment={this.props.addComment}
                 />
             );
         }
@@ -117,7 +141,7 @@ class Main extends Component {
                 <Routes>
                     <Route path='*' element={<Navigate replace to="/home" />} />
                     <Route path='/home' element={<HomePage />} />
-                    <Route path='/aboutus/' element={<AboutUs leaders={this.props.leaders}/>} />
+                    <Route path='/aboutus/' element={<AboutUs leaders={this.props.leaders} />} />
                     <Route exact path='/menu' element={<Menu dishes={this.props.dishes} />} />
                     <Route path='/menu/:dishId' element={<DishWithId />} />
                     <Route exact path='/contactus' element={<Contact />} />
@@ -128,5 +152,6 @@ class Main extends Component {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(Main));  // ??? syntax to connect props of the Main component to the state from the Redux Store
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));
+// ??? a react-redux method to connect props of the Main component to the state from the Redux Store as well as to dispatch  action objects to the Redux Store anytime an object is created by some component
 // withRouter method is used to enable the React Router navigation through a SPA components with a Redux state

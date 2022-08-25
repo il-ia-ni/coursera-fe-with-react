@@ -13,6 +13,7 @@ const DishDetail = (props) => {
        renders a Bootstrap Breadcrumb structure up to a dish selected
        renders a Reactstrap Card for a selected menu item using a func component RenderDish
        renders a div container with an Reactstrap unstyled list of comments for a selected menu item using a func component RenderDish
+       dispatches a fucntion creating ADD_COMMENT-type action objects to the Redux Store to update the Comments state based on the data received from user
     props: 
         {selectedDish: object || none}
         {comments: object }
@@ -42,10 +43,11 @@ const DishDetail = (props) => {
                 </div>
                 <div className='col-12 row'>
                     <RenderDish dish={props.selectedDish} />
-                    <div className="col-12 col-md-7">
-                        <RenderComments comments={props.comments} />
-                        <CommentForm />
-                    </div>
+                    <RenderComments
+                        comments={props.comments}
+                        addComment={props.addComment}
+                        dishId={props.selectedDish.id}
+                    />
                 </div>
             </div>
         );
@@ -75,10 +77,15 @@ function RenderDish({ dish }) {
     );
 }
 
-function RenderComments({ comments }) {
+function RenderComments({ comments, addComment, dishId }) {
     /* renders a list item with a comment data for each object in the array of comments for a selected menu item
     renders and returns a div container with a Reactstrap unstyled List of rendered comments for the selected menu item 
-        props: { comments: array } */
+    contains a CommentForm modal with a React-Redux-Form LocalForm for adding new comments for the selected dish
+    
+    props:  comments: array of objects with the comment information
+                NEW: addComment: function returning an ADD_COMMENT action object
+                NEW: dishId: a matched Dynamic Segment of a rooted URL from the MainComponent
+    */
 
     function _formatDate(string) {
         /* A helper function to format a datetime str and return a new str
@@ -108,6 +115,7 @@ function RenderComments({ comments }) {
                 <List type="unstyled">
                     {rendered_comments}
                 </List>
+                <CommentForm dishId={dishId} addComment={addComment} />
             </div>
         );
     }
@@ -127,6 +135,8 @@ function RenderComments({ comments }) {
 }
 
 class CommentForm extends Component {
+    /* Creates a modal with a LocalForm of the React-Redux-Form
+        Adds a new comment using the function for creating an action object of a type ADD_COMMENT to update a state in the Redux Store */
 
     constructor(props) {
         super(props);
@@ -145,7 +155,8 @@ class CommentForm extends Component {
 
     handleLocalFormSubmit(values) {
         this.toggleModal();
-        alert("Submitting the following comment: " + JSON.stringify(values));
+        // alert("Submitting the following comment: " + JSON.stringify(values));
+        this.props.addComment(this.props.dishId, values.commentRating, values.clientName, values.commentText);  // modifies the Comments state by dispatching an ADD_COMMENT action to the Redux Store. Connects the function params dishID, rating, author and comment with the values of the Controls (inputs) with ids from the values-object.
     }
 
     /* For the React-Redux-Form <Control.select> an <option selected> item is not added to the model unless reselected by user! To set a deafult selected value for a dropdown, an attr --defaultValue='str'-- hast to be set for the <Control.select> itself! Found @ https://github.com/davidkpiano/react-redux-form/issues/458 */
