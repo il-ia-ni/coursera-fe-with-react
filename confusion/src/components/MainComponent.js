@@ -33,7 +33,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => ({
     /* creates an action object of type ADD_COMMENT 
-    gives the object to a dipatcher function (Connect-method of react-redux in the export of the Main component) */
+    gives the object to a dipatcher function (Connect-method of react-redux in the export of the Main component) that dispatches the action object to the Redux Store each time an action takes place. The dispatched action object gets used by a reducer function with a previus state and the action */
 
 
     addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment))  // the function creating an action object is implemented as an attr of a rendered helper component DishWithId below, where the action gets dispatched to the Redux Store
@@ -153,5 +153,5 @@ class Main extends Component {
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));
-// ??? a react-redux method to connect props of the Main component to the state from the Redux Store as well as to dispatch  action objects to the Redux Store anytime an object is created by some component
+// ??? a react-redux method to connect props of the Main component to the state from the Redux Store as well as to dispatch  action objects to the Redux Store anytime an object is created by some component. The dispatched action object gets used by a reducer function with a previus state in the Redux Store to update the state. See @ https://redux.js.org/tutorials/fundamentals/part-2-concepts-data-flow#redux-application-data-flow
 // withRouter method is used to enable the React Router navigation through a SPA components with a Redux state

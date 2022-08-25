@@ -1,9 +1,11 @@
 import { COMMENTS } from '../../shared/comments';
 import * as ActionTypes from '../ActionTypes';  // ES6 import of all vars from a module
 
+// ??? SHOULD ACTIONS BE ORGANIZED IN ONE FILE WITH REDUCERS AS "SLICES"??? See @ https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#splitting-reducers
+
 export const Comments = (state = COMMENTS, action) => {
-    /* Reducer function that sets an array of objects as an initial state 
-    Updates a state immutably based on an action received. See @ https://redux.js.org/tutorials/fundamentals/part-2-concepts-data-flow#reducers */
+    /* Reducer function that sets an array of objects as an initial state. A pure functions without any "side effects" (console logs, saving files, modifying args and calling a function, AJAX HTTP reqs, etc...) that only returns a value and does noting else
+    Updates a state immutably based on an action received. See @ https://redux.js.org/tutorials/fundamentals/part-2-concepts-data-flow#reducers and https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#writing-reducers */
 
     switch (action.type) {
 

@@ -10,6 +10,11 @@ import { Promotions } from './reducers/promotions';
 import { useNavigate } from 'react-router-dom';
 
 export const ConfigureStore = () => {
+    /* An initial setup of the Redux Store structure. The current Redux application global state (the core data that the application works with, a JS object consisting of arrays of plain JS objects. See @https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#designing-the-state-structure) lives in an object called the store.    
+    
+    The store state is read-only to the rest of the app (See @ https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#designing-the-state-values). 
+    
+    Reducer functions are used to update the state in response to actions. Redux uses a "one-way data flow" app structure */
 
     /* const store = createStore(
         Reducer,
@@ -17,7 +22,10 @@ export const ConfigureStore = () => {
     ); */
 
     const store = createStore(
-        combineReducers({
+
+        combineReducers({  // a redux method (https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#combinereducers) to combine separate reducer functions into a single Root Reducer function upon initialization of the app (see @ https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#creating-the-root-reducer). The Store calls the root reducer once to create a global  state of the app
+            // The reducers are split to simplify the code. See @ https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#splitting-reducers
+            // the key names you give to combineReducers decides what the key names of your state object will be!
             comments: Comments,
             dishes: Dishes,
             leaders: Leaders,

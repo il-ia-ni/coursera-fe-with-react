@@ -1,4 +1,8 @@
-/* Area of the functions creating action objects for the Redux actions specified in the ActionType.js module */
+/* Area of the functions creating action objects for the Redux actions specified in the ActionType.js module
+
+Actions are events that describe something that happened in the application. Any extra data needed to describe what's happening is stored in the "payload" of the action. See @ https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#designing-actions.*/
+
+// ??? SHOULD ACTIONS BE ORGANIZED IN ONE FILE WITH REDUCERS AS "SLICES"??? See @ https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#splitting-reducers
 
 import * as ActionTypes from './ActionTypes';  // ES6 import of all vars from a module
 
