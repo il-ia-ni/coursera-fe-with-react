@@ -47,6 +47,6 @@ export const fetchDishes = () => (dispatch) => {
     dispatch(dishesLoading(true));
 
     setTimeout(() => {
-        dispatch(addDishes(DISHES));
+        dispatch(addDishes(DISHES));  // Dishes objs data is imported now in the thunk and not in the dishes reducer anymore
     }, 2000);  // a TS Node.js method, returns a function after a delay of 2000 ms. TODO: replace with an async fetch from server
 };

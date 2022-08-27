@@ -34,7 +34,7 @@ export const ConfigureStore = () => {
             leaders: Leaders,
             promotions: Promotions
         }),
-        applyMiddleware(thunk, logger)  // applyMiddleware returns Redux Store enchancers (see params of createStore())
+        applyMiddleware(thunk, logger)  // applyMiddleware returns Redux Store enchancers (see params of createStore()). Thunk lets dispatching custom functions to the Redux Store instead of action objects directly (See Main component). Logger displays logs of infos on actions in the browser JS console
     );
 
     return store;
