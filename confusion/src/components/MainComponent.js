@@ -12,7 +12,7 @@ import AboutUs from './AboutUsComponent';
 import Menu from './MenuComponent';
 import Contact from './ContactComponent';
 
-import { addComment } from '../redux/ActionCreators';
+import { addComment, fetchDishes } from '../redux/ActionCreators';
 import DishDetail from './DishdetailComponent';
 
 
@@ -24,7 +24,7 @@ const mapStateToProps = state => {
     // All "this.state.x" references in the code of the Main component-class must also be updated to "this.props.x"!
 
     return {
-        dishes: state.dishes,
+        dishes: state.dishes,  // no longer an array of Dishes objs, but an object with 3 attrs (isLoading, errorMssg and dishes_data array, see configureStore and Dishes reducer!!! The changes are applied in Home and in DishDetail components as welll as given to the Menu component below )
         comments: state.comments,
         promotions: state.promotions,
         leaders: state.leaders,
@@ -36,7 +36,8 @@ const mapDispatchToProps = (dispatch) => ({
     gives the object to a dipatcher function (Connect-method of react-redux in the export of the Main component) that dispatches the action object to the Redux Store each time an action takes place. The dispatched action object gets used by a reducer function with a previus state and the action */
 
 
-    addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment))  // the function creating an action object is implemented as an attr of a rendered helper component DishWithId below, where the action gets dispatched to the Redux Store
+    addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment)),  // dispatches the function creating an action object to the props of the Main Component. The ADD_COMMENT actions are implemented as an attr of a rendered helper component DishWithId below, where the action gets dispatched to the Redux Store and is used later by Comments reducer
+    fetchDishes: () => { dispatch(fetchDishes()) }  // dispatches a thunk function fetchDishes to the props of the Main component. The thunk dispatches 2 functions creating Redux actions: DISHES_LOADING and ADD_DISHES that are used later by Dishes reducer
 })
 
 
@@ -54,6 +55,12 @@ class Main extends Component {
         super(props);
     }
 
+    componentDidMount() {
+        /* A lifecycle component method being executed right after the Main Component gets mounted in the View of the SPA
+        - fetches following data required for the app using thunks from the component props: Dishes */
+        this.props.fetchDishes();  // tries to load the Dishes objs into the state of the Redux Store
+    };
+
     render() {
 
         /* Local functional component to parametrize another component...
@@ -64,7 +71,10 @@ class Main extends Component {
         */
         const HomePage = () => {
             return (
-                <Home dish={this.props.dishes.filter((dish) => dish.featured)[0]}
+                <Home
+                    dishesLoading={this.props.dishes.isLoading}
+                    dishesLoadingFailed={this.props.dishes.errorMssg}
+                    dish={this.props.dishes.dishes_data.filter((dish) => dish.featured)[0]}
                     leader={this.props.leaders.filter((leader) => leader.featured)[0]}
                     promotion={this.props.promotions.filter((promotion) => promotion.featured)[0]}
                 />
@@ -89,8 +99,10 @@ class Main extends Component {
             */
             return (
                 <DishDetail
+                    isLoading={this.props.dishes.isLoading}
+                    errorMssg={this.props.dishes.errorMssg}
                     selectedDish={
-                        this.props.dishes.filter((dish) => dish.id === parseInt(dishId, 10))[0]
+                        this.props.dishes.dishes_data.filter((dish) => dish.id === parseInt(dishId, 10))[0]
                     }
                     comments={
                         this.props.comments.filter((comment) => comment.dishId === parseInt(dishId, 10))

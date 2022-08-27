@@ -1,7 +1,10 @@
 /* a (optionally!!! done for convenience) separate script for configuring a single store of states for the whole project (Redux Store) based on the ConfigureStore-cls of Redux */
 
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
 // general reducer function is replaced with 4 separate ones for each state for more flexible control over the general state. Initial State is initialized by the redux now
+import thunk from 'redux-thunk';  // Middleware for chaning the behaviour of dispatching object functions
+import logger from 'redux-logger';  // Middleware for logging the actions dispatched to the Redux Store
+
 import { Comments } from './reducers/comments';
 import { Dishes } from './reducers/dishes';
 import { Leaders } from './reducers/leaders';
@@ -27,10 +30,11 @@ export const ConfigureStore = () => {
             // The reducers are split to simplify the code. See @ https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#splitting-reducers
             // the key names you give to combineReducers decides what the key names of your state object will be!
             comments: Comments,
-            dishes: Dishes,
+            dishes: Dishes,  // no longer an array of Dishes objs, but an object with 3 attrs (isLoading, errorMssg and dishes_data array, see the Dishes reducer!!! )
             leaders: Leaders,
             promotions: Promotions
-        })
+        }),
+        applyMiddleware(thunk, logger)  // applyMiddleware returns Redux Store enchancers (see params of createStore())
     );
 
     return store;

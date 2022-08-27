@@ -6,3 +6,8 @@ Action type is speicifed as a string constant - standardized pattern of a struct
 Implementation of the specified in this module actions takes place in ActionCreators.js */
 
 export const ADD_COMMENT = 'ADD_COMMENT';
+
+/* Actions for fetching dishes data */
+export const DISHES_LOADING = 'DISHES_LOADING';
+export const DISHES_LOADING_FAILED = 'DISHES_LOADING_FAILED';
+export const ADD_DISHES = 'ADD_DISHES';

@@ -2,17 +2,21 @@ import React from 'react';
 import { Card, CardImg, CardImgOverlay, CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
-// METHOD 2 to declare a functional compinent: as a const for an ES-6 arrow function with props obj as args
+import LoadingSpinner from './LoadingComponent';
+
+// METHOD 2 to declare a functional component: as a const for an ES-6 arrow function with a props obj as args
 const Menu = (props) => {
-    /* maps menu items from an array of objects  
-       renders each menu item using a func component RenderMenuItem
+    /* performs conditional rendering based on the props values received from the Dishes state
+        maps menu items from an array of Dishes objects 
     props: 
-        {dishes: array }
+        {dishes: an object with 3 attrs (isLoading, errorMssg and dishes_data array, see configureStore and Dishes reducer!!! }
     returns: 
-        a rendered div-container containing Cards of menu items */
+        if data if being fetched: renders LoadingSpinner component
+        if error message received: renders the error message
+        if mapping menu items is not empty: a rendered div-container containing Cards of menu items */
 
     // this-keyword before props is no longer needed! Functional components are not classes!
-    const menu = props.dishes.map((dish) => {
+    const menu = props.dishes.dishes_data.map((dish) => {
         return (
             <div key={dish.id} className="col-12 col-md-5 m-1">
                 <RenderMenuItem dish_obj={dish} />
@@ -20,27 +24,48 @@ const Menu = (props) => {
         )
     });
 
-    return (
-        <div className='container'>
-            <div className='row'>
-                <Breadcrumb>
-                    <BreadcrumbItem>
-                        <Link to='/home'>Home</Link>
-                    </BreadcrumbItem>     
-                    <BreadcrumbItem active>
-                        Menu    
-                    </BreadcrumbItem>   
-                </Breadcrumb>
+    if (props.dishes.isLoading) {  // if the Dishes reducer received the action DISHES_LOADING and dishes state has isLoading: true
+        return (
+            <div className='container'>
+                <div className='row'>
+                    <LoadingSpinner />
+                </div>
             </div>
-            <div className='col-12'>
-                <h3>Menu</h3>
-                <hr />
+        );
+    }
+
+    else if (props.errorMssg != null) {  // if the Dishes reducer received the action DISHES_LOADING_FAILED and dishes state has errorMssg not null
+        return (
+            <div className='container'>
+                <div className='row'>
+                    <h4>{props.dishes.errorMssg}</h4>
+                </div>
             </div>
-            <div className='row'>
-                {menu}
+        );
+    }
+
+    else  // if the Dishes reducer received the action ADD_DISHES and dishes state filter of dishes_data returned a Dish object
+        return (
+            <div className='container'>
+                <div className='row'>
+                    <Breadcrumb>
+                        <BreadcrumbItem>
+                            <Link to='/home'>Home</Link>
+                        </BreadcrumbItem>
+                        <BreadcrumbItem active>
+                            Menu
+                        </BreadcrumbItem>
+                    </Breadcrumb>
+                </div>
+                <div className='col-12'>
+                    <h3>Menu</h3>
+                    <hr />
+                </div>
+                <div className='row'>
+                    {menu}
+                </div>
             </div>
-        </div>
-    );
+        );
 }
 
 // METHOD 1 to declare a functional component: as a simple JS-function

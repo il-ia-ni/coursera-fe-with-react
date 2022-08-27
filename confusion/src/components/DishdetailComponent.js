@@ -3,25 +3,51 @@ import { Card, CardImg, CardText, CardBody, CardTitle, List, Breadcrumb, Breadcr
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 
+import LoadingSpinner from './LoadingComponent';
+
 // Validation functions Area for React-Redux-Form validation 
 const requiredHasValue = (val) => val && val.length;
 const isMaxLength = (len) => (val) => !(val) || (val.length <= len);
 const isMinLength = (len) => (val) => (val) && (val.length >= len);
 
 const DishDetail = (props) => {
-    /* Functional component for rendering contents for a selected dish from a menu
+    /* Functional component for conditional rendering of the Menu View and of contents for a selected dish from a menu
        renders a Bootstrap Breadcrumb structure up to a dish selected
        renders a Reactstrap Card for a selected menu item using a func component RenderDish
        renders a div container with an Reactstrap unstyled list of comments for a selected menu item using a func component RenderDish
        dispatches a fucntion creating ADD_COMMENT-type action objects to the Redux Store to update the Comments state based on the data received from user
     props: 
+        {isLoading: true || false}
+        {errorMssg: null || string}
         {selectedDish: object || none}
         {comments: object }
     returns: 
+        if data if being fetched: renders LoadingSpinner component
+        if error message received: renders the error message
         if selectedDish is an object: a rendered div-container containing the rendered information for the selected menu item
-        if selectedDish is none: an empty div-container */
+     */
 
-    if (props.selectedDish) {
+    if (props.isLoading) {  // if the Dishes reducer received the action DISHES_LOADING and dishes state has isLoading: true
+        return (
+            <div className='container'>
+                <div className='row'>
+                    <LoadingSpinner />
+                </div>
+            </div>
+        );
+    }
+
+    else if (props.errorMssg != null) {  // if the Dishes reducer received the action DISHES_LOADING_FAILED and dishes state has errorMssg not null
+        return (
+            <div className='container'>
+                <div className='row'>
+                    <h4>{props.errorMssg}</h4>
+                </div>
+            </div>
+        );
+    }
+    
+    else if (props.selectedDish != null && !props.isLoading && props.errorMssg == null) {  // if the Dishes reducer received the action ADD_DISHES and dishes state filter of dishes_data returned a Dish object
         return (
             <div className='container'>
                 <div className='row'>
@@ -50,12 +76,6 @@ const DishDetail = (props) => {
                     />
                 </div>
             </div>
-        );
-    }
-
-    else {
-        return (
-            <div />
         );
     }
 }
