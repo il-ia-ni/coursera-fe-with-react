@@ -6,7 +6,7 @@ import { Breadcrumb, BreadcrumbItem, Button, Label, Col, Row } from 'reactstrap'
 - FormGroup is replaced with the Row components of reactstrap with react classes 'input-group mb-3' ('form-group' cls from the course is removed in Bootstrap 5) OR with div containers with bootstrap-class 'form-check'
 - FormFeedback is replaced with React-Redux validation */
 import { Link } from 'react-router-dom';
-import { Control, Form, Errors, actions } from 'react-redux-form';  // Form component of React-Redux-Form lets inputs data be stored in the Redux Store for the form persistance until reset
+import { Control, LocalForm, Errors } from 'react-redux-form';  // LocalForm of React-Redux-Form stores the form data locally in the components state but can use the validation mechanisms of the React-Redux-Form library over the values-obj
 
 /* 
 Validation Functions Area for React-Redux-Form validation 
@@ -42,7 +42,7 @@ class Contact extends Component {
         */
         console.log("Current submitted State of the Form is: " + JSON.stringify(values))
         alert("Current submitted State of the Form is: " + JSON.stringify(values))
-        this.props.resetFeedbackForm();  // resets the Form to its initial state upon submit
+        // event.preventDefault() is no longer needed due to using the React-Redux-Form LocalForm component
     }
 
     // validate-inputs() method returning upon validation an errors object for the inputs valid- and invalid-attributes as well as for the FormFeedback component is also no longer needed, as React-Redux-Form has its own validation built-in
@@ -106,7 +106,7 @@ class Contact extends Component {
                     <div className='col-12'>
                         <h3 className='mb-5'>Send us Your Feedback</h3>
                         <div className='col-12 col-md-9'>
-                            <Form model='feedbackForm' onSubmit={(values) => this.handleSubmit(values)}>
+                            <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
                                 <Row className="input-group mb-3">
                                     <Label htmlFor='firstname' md={2}>First Name</Label>
                                     <Col md={10}>
@@ -258,7 +258,7 @@ class Contact extends Component {
                                         <Button type='submit' color='primary'>Send feedback</Button>
                                     </Col>
                                 </Row>
-                            </Form>
+                            </LocalForm>
                         </div>
                     </div>
                 </div>

@@ -1,16 +1,19 @@
 /* a (optionally!!! done for convenience) separate script for configuring a single store of states for the whole project (Redux Store) based on the ConfigureStore-cls of Redux */
 
-import { combineReducers, createStore, applyMiddleware } from 'redux';
-// general reducer function is replaced with 4 separate ones for each state for more flexible control over the general state. Initial State is initialized by the redux now
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+// combineReducers - general reducer function is replaced with 4 separate ones for each state for more flexible control over the general state. Initial State is initialized by the redux now
+import { createForms } from 'react-redux-form';  // adds any neccessary states to the Store as well as action creators and reducer functions that allow adding a state of the form to the Redux Store instead of keeping it in the state of a component
 import thunk from 'redux-thunk';  // Middleware for chaning the behaviour of dispatching object functions
 import logger from 'redux-logger';  // Middleware for logging the actions dispatched to the Redux Store
+import { useNavigate } from 'react-router-dom';
 
 import { Comments } from './reducers/comments';
 import { Dishes } from './reducers/dishes';
 import { Leaders } from './reducers/leaders';
 import { Promotions } from './reducers/promotions';
 // == import * as reducers from './reducers/';
-import { useNavigate } from 'react-router-dom';
+import { InitionalFeedbackForm} from './InitialForms';
+
 
 export const ConfigureStore = () => {
     /* An initial setup of the Redux Store structure. The current Redux application global state (the core data that the application works with, a JS object consisting of arrays of plain JS objects. See @https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#designing-the-state-structure) lives in an object called the store.    
@@ -32,7 +35,8 @@ export const ConfigureStore = () => {
             comments: Comments,
             dishes: Dishes,  // no longer an array of Dishes objs, but an object with 3 attrs (isLoading, errorMssg and dishes_data array, see the Dishes reducer!!! )
             leaders: Leaders,
-            promotions: Promotions
+            promotions: Promotions,
+            ...createForms({feedbackForm: InitionalFeedbackForm})  // sets initial values to a form with model='FeedbackForm'
         }),
         applyMiddleware(thunk, logger)  // applyMiddleware returns Redux Store enchancers (see params of createStore()). Thunk lets dispatching custom functions to the Redux Store instead of action objects directly (See Main component). Logger displays logs of infos on actions in the browser JS console
     );

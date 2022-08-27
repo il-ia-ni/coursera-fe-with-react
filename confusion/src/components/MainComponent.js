@@ -3,7 +3,8 @@ import { Routes, Route, Navigate, useParams } from 'react-router-dom';  // withR
 // In V6 of react-router-dom Routes replaced Switch as a more powerful alternative. See @ https://reactrouter.com/docs/en/v6/upgrading/v5#upgrade-all-switch-elements-to-routes
 // In V6 of react-router-dom Redirect is removed. Navigate component is an alternative. See @ https://reactrouter.com/docs/en/v6/upgrading/v5#remove-redirects-inside-switch
 import { withRouter } from '../redux/configureStore';  // This withRouter-replacement enables a router for Redex-connected components! withRouter Higher Components is depreciated in react-router-dom v6. Found @ https://stackoverflow.com/questions/64782949/how-to-pass-params-into-link-using-react-router-v6 and @ https://github.com/remix-run/react-router/issues/7156
-import { connect } from 'react-redux';  // a wrapper container for React components to enable access to the Redux Store. 
+import { connect } from 'react-redux';  // a wrapper container for React components to enable access to the Redux Store.
+import { actions } from 'react-redux-form';  // is used in the dispatcher of the action creators mapDispatchToProps of the MainComponent to reset the state of the Feedbackform's inputs upon submitting the form
 
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
@@ -37,7 +38,8 @@ const mapDispatchToProps = (dispatch) => ({
 
 
     addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment)),  // dispatches the function creating an action object to the props of the Main Component. The ADD_COMMENT actions are implemented as an attr of a rendered helper component DishWithId below, where the action gets dispatched to the Redux Store and is used later by Comments reducer
-    fetchDishes: () => { dispatch(fetchDishes()) }  // dispatches a thunk function fetchDishes to the props of the Main component. The thunk dispatches 2 functions creating Redux actions: DISHES_LOADING and ADD_DISHES that are used later by Dishes reducer
+    fetchDishes: () => { dispatch(fetchDishes()) },  // dispatches a thunk function fetchDishes to the props of the Main component. The thunk dispatches 2 functions creating Redux actions: DISHES_LOADING and ADD_DISHES that are used later by Dishes reducer
+    resetFeedbackForm: () => { dispatch(actions.reset('feedbackForm')) },  // dispatches a React-Redux-Form action creator to reset a form with the model name "FeedbackForm" to the original state set in the Redux Store. The function is given to the props of the Contact component below
 })
 
 
@@ -156,7 +158,7 @@ class Main extends Component {
                     <Route path='/aboutus/' element={<AboutUs leaders={this.props.leaders} />} />
                     <Route exact path='/menu' element={<Menu dishes={this.props.dishes} />} />
                     <Route path='/menu/:dishId' element={<DishWithId />} />
-                    <Route exact path='/contactus' element={<Contact />} />
+                    <Route exact path='/contactus' element={<Contact resetFeedbackForm={this.props.resetFeedbackForm}/>} />
                 </Routes>
                 <Footer />
             </div>
