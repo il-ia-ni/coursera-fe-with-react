@@ -13,7 +13,7 @@ import AboutUs from './AboutUsComponent';
 import Menu from './MenuComponent';
 import Contact from './ContactComponent';
 
-import { addComment, fetchDishes } from '../redux/ActionCreators';
+import { addComment, fetchComments, fetchDishes, fetchPromos } from '../redux/ActionCreators';
 import DishDetail from './DishdetailComponent';
 
 
@@ -36,9 +36,14 @@ const mapDispatchToProps = (dispatch) => ({
     /* creates an action object of type ADD_COMMENT 
     gives the object to a dipatcher function (Connect-method of react-redux in the export of the Main component) that dispatches the action object to the Redux Store each time an action takes place. The dispatched action object gets used by a reducer function with a previus state and the action */
 
-
-    addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment)),  // dispatches the function creating an action object to the props of the Main Component. The ADD_COMMENT actions are implemented as an attr of a rendered helper component DishWithId below, where the action gets dispatched to the Redux Store and is used later by Comments reducer
+    // Thunk creator functions containing fetching actions, get dispatched to the Store at the moment when the Main component is mounted using the call in the lifecycle method componentDidMount() below
     fetchDishes: () => { dispatch(fetchDishes()) },  // dispatches a thunk function fetchDishes to the props of the Main component. The thunk dispatches 2 functions creating Redux actions: DISHES_LOADING and ADD_DISHES that are used later by Dishes reducer
+    fetchComments: () => { dispatch(fetchComments()) },
+    fetchPromos: () => { dispatch(fetchPromos()) },
+
+    // additional action creators
+    addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment)),  // dispatches the function creating an action object to the props of the Main Component. The ADD_COMMENT actions are implemented as an attr of a rendered helper component DishWithId below, where the action gets dispatched to the Redux Store and is used later by Comments reducer
+
     resetFeedbackForm: () => { dispatch(actions.reset('feedbackForm')) },  // dispatches a React-Redux-Form reset-action creator to reset a form with the model name "FeedbackForm" to the original state (set in the Redux Store). The function is given to the props of the Contact component below
 })
 
@@ -59,8 +64,10 @@ class Main extends Component {
 
     componentDidMount() {
         /* A lifecycle component method being executed right after the Main Component gets mounted in the View of the SPA
-        - fetches following data required for the app using thunks from the component props: Dishes */
+        - fetches following data required for the app using thunks dispatched as component props  */
         this.props.fetchDishes();  // tries to load the Dishes objs into the state of the Redux Store
+        this.props.fetchComments();
+        this.props.fetchPromos();
     };
 
     render() {
@@ -78,7 +85,9 @@ class Main extends Component {
                     dishesLoadingFailed={this.props.dishes.errorMssg}
                     dish={this.props.dishes.dishes_data.filter((dish) => dish.featured)[0]}
                     leader={this.props.leaders.filter((leader) => leader.featured)[0]}
-                    promotion={this.props.promotions.filter((promotion) => promotion.featured)[0]}
+                    promosLoading={this.props.promotions.isLoading}
+                    promosLoadingFailed={this.props.promotions.errorMssg}
+                    promotion={this.props.promotions.promos_data.filter((promotion) => promotion.featured)[0]}
                 />
             );
         }
@@ -102,12 +111,13 @@ class Main extends Component {
             return (
                 <DishDetail
                     isLoading={this.props.dishes.isLoading}
-                    errorMssg={this.props.dishes.errorMssg}
+                    dishesErrorMssg={this.props.dishes.errorMssg}
                     selectedDish={
                         this.props.dishes.dishes_data.filter((dish) => dish.id === parseInt(dishId, 10))[0]
                     }
+                    commentsErrorMssg={this.props.comments.errorMssg}
                     comments={
-                        this.props.comments.filter((comment) => comment.dishId === parseInt(dishId, 10))
+                        this.props.comments.comments_data.filter((comment) => comment.dishId === parseInt(dishId, 10))
                     }
                     addComment={this.props.addComment}
                 />

@@ -11,3 +11,13 @@ export const ADD_COMMENT = 'ADD_COMMENT';
 export const DISHES_LOADING = 'DISHES_LOADING';
 export const DISHES_LOADING_FAILED = 'DISHES_LOADING_FAILED';
 export const ADD_DISHES = 'ADD_DISHES';
+
+/* Actions for fetching comments data */
+export const ADD_COMMENTS = 'ADD_COMMENTS';
+export const COMMENTS_LOADING_FAILED = 'COMMENTS_LOADING_FAILED';
+// comments are fetched in the background as the initial Home component is loaded. There is no need for the LOADING action for them as long as they are not displayed on the main page
+
+/* Actions for frtching promotions data */
+export const ADD_PROMOS = 'ADD_PROMOS';
+export const PROMOS_LOADING = 'PROMOS_LOADING';
+export const PROMOS_LOADING_FAILED = 'PROMOS_LOADING_FAILED';

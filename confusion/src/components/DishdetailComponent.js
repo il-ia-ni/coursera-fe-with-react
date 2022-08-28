@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 
 import LoadingSpinner from './LoadingComponent';
+import { baseUrl } from '../shared/BaseURL';
 
 // Validation functions Area for React-Redux-Form validation 
 const requiredHasValue = (val) => val && val.length;
@@ -18,7 +19,7 @@ const DishDetail = (props) => {
        dispatches a fucntion creating ADD_COMMENT-type action objects to the Redux Store to update the Comments state based on the data received from user
     props: 
         {isLoading: true || false}
-        {errorMssg: null || string}
+        {dishesErrorMssg; commentsErrorMssg: null || string}
         {selectedDish: object || none}
         {comments: object }
     returns: 
@@ -37,17 +38,17 @@ const DishDetail = (props) => {
         );
     }
 
-    else if (props.errorMssg != null) {  // if the Dishes reducer received the action DISHES_LOADING_FAILED and dishes state has errorMssg not null
+    else if (props.dishesErrorMssg != null || props.commentsErrorMssg != null) {  // if the Dishes / Comments reducer received the action DISHES_ / COMMENTS_LOADING_FAILED and dishes / comments state has errorMssg not null
         return (
             <div className='container'>
                 <div className='row'>
-                    <h4>{props.errorMssg}</h4>
+                    <h4>{props.dishesErrorMssg + '' + props.commentsErrorMssg}</h4>
                 </div>
             </div>
         );
     }
     
-    else if (props.selectedDish != null && !props.isLoading && props.errorMssg == null) {  // if the Dishes reducer received the action ADD_DISHES and dishes state filter of dishes_data returned a Dish object
+    else if (props.selectedDish != null) {  // if the Dishes reducer received the action ADD_DISHES and dishes state filter of dishes_data returned a Dish object
         return (
             <div className='container'>
                 <div className='row'>
@@ -87,7 +88,7 @@ function RenderDish({ dish }) {
     return (
         <div className="col-12 col-md-4 m-1">
             <Card>
-                <CardImg width="100%" src={dish.image} alt={dish.name} />
+                <CardImg width="100%" src={baseUrl + dish.image} alt={dish.name} />
                 <CardBody>
                     <CardTitle tag="h5">{dish.name}</CardTitle>
                     <CardText>{dish.description}</CardText>

@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle } from 'reactstrap';
 import LoadingSpinner from "./LoadingComponent";
+import { baseUrl } from '../shared/BaseURL';
 
 function RenderCard({ isLoading, errorMssg, item }) {
     /* A helper functional component used in the Home component for a conditional rendering of a card for an object */
@@ -24,7 +25,7 @@ function RenderCard({ isLoading, errorMssg, item }) {
     else  // if object's reducer could fetch the data and the filter of the action ADD_obj returned an instance of the obj
         return (
             <Card>
-                <CardImg src={item.image} alt={item.name} />
+                <CardImg src={baseUrl + item.image} alt={item.name} />
                 <CardBody>
                     <CardTitle tag="h4">{item.name}</CardTitle>
                     {item.designation ? <CardSubtitle tag="b">{item.designation}</CardSubtitle> : null}
@@ -48,6 +49,8 @@ function Home(props) {
                 </div>
                 <div className="col-12 col-md m-1 mb-5">
                     <RenderCard
+                        isLoading={props.promosLoading}
+                        errorMssg={props.promosLoadingFailed}
                         item={props.promotion} />
                 </div>
                 <div className="col-12 col-md m-1 mb-5">

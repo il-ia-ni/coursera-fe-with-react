@@ -3,6 +3,7 @@ import { Card, CardImg, CardImgOverlay, CardTitle, Breadcrumb, BreadcrumbItem } 
 import { Link } from 'react-router-dom';
 
 import LoadingSpinner from './LoadingComponent';
+import { baseUrl } from '../shared/BaseURL';
 
 // METHOD 2 to declare a functional component: as a const for an ES-6 arrow function with a props obj as args
 const Menu = (props) => {
@@ -34,7 +35,7 @@ const Menu = (props) => {
         );
     }
 
-    else if (props.errorMssg != null) {  // if the Dishes reducer received the action DISHES_LOADING_FAILED and dishes state has errorMssg not null
+    else if (props.dishes.errorMssg != null) {  // if the Dishes reducer received the action DISHES_LOADING_FAILED and dishes state has errorMssg not null
         return (
             <div className='container'>
                 <div className='row'>
@@ -78,7 +79,7 @@ function RenderMenuItem({ dish_obj }) {
     return (
         <Card>
             <Link to={`/menu/${dish_obj.id}`}>
-                <CardImg width="100%" src={dish_obj.image} alt={dish_obj.name} />
+                <CardImg width="100%" src={baseUrl + dish_obj.image} alt={dish_obj.name} />
                 <CardImgOverlay body className="ml-5">
                     <CardTitle tag="h5">{dish_obj.name}</CardTitle>
                 </CardImgOverlay>
