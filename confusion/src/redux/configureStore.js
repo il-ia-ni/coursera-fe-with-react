@@ -3,7 +3,7 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 // combineReducers - general reducer function is replaced with 4 separate ones for each state for more flexible control over the general state. Initial State is initialized by the redux now
 import { createForms } from 'react-redux-form';  // adds any neccessary states to the Store as well as action creators and reducer functions that allow adding a state of the form to the Redux Store instead of keeping it in the state of a component
-import thunk from 'redux-thunk';  // Middleware for chaning the behaviour of dispatching object functions
+import thunk from 'redux-thunk';  // Middleware for chaining the behaviour of dispatching object functions
 import logger from 'redux-logger';  // Middleware for logging the actions dispatched to the Redux Store
 import { useNavigate } from 'react-router-dom';
 

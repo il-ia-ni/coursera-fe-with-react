@@ -41,9 +41,14 @@ export const addDishes = (dishes) => ({
 });
 
 export const fetchDishes = () => (dispatch) => {
-    /* A thunk returning a function within a function applied to:
+    /* A thunk function that performs a custom logic (side effects) upon a function it is applied to:
         dispatch 1: calls dishesLoading 
-        dispatch 2: calls addDishes - pushes Dishes objs into the state of the Redux Store */
+        dispatch 2: calls addDishes - pushes Dishes objs into the state of the Redux Store 
+    params of a thunk function:
+        dispatch: a Redux dispatch function that sends an action object to the Store to be used by reducers
+        getState: not used in this case
+        See @ https://redux.js.org/usage/writing-logic-thunks#writing-thunks */
+        
     dispatch(dishesLoading(true));
 
     setTimeout(() => {

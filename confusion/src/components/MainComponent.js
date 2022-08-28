@@ -39,7 +39,7 @@ const mapDispatchToProps = (dispatch) => ({
 
     addComment: (dishId, rating, author, comment) => dispatch(addComment(dishId, rating, author, comment)),  // dispatches the function creating an action object to the props of the Main Component. The ADD_COMMENT actions are implemented as an attr of a rendered helper component DishWithId below, where the action gets dispatched to the Redux Store and is used later by Comments reducer
     fetchDishes: () => { dispatch(fetchDishes()) },  // dispatches a thunk function fetchDishes to the props of the Main component. The thunk dispatches 2 functions creating Redux actions: DISHES_LOADING and ADD_DISHES that are used later by Dishes reducer
-    resetFeedbackForm: () => { dispatch(actions.reset('feedbackForm')) },  // dispatches a React-Redux-Form action creator to reset a form with the model name "FeedbackForm" to the original state set in the Redux Store. The function is given to the props of the Contact component below
+    resetFeedbackForm: () => { dispatch(actions.reset('feedbackForm')) },  // dispatches a React-Redux-Form reset-action creator to reset a form with the model name "FeedbackForm" to the original state (set in the Redux Store). The function is given to the props of the Contact component below
 })
 
 
@@ -158,7 +158,7 @@ class Main extends Component {
                     <Route path='/aboutus/' element={<AboutUs leaders={this.props.leaders} />} />
                     <Route exact path='/menu' element={<Menu dishes={this.props.dishes} />} />
                     <Route path='/menu/:dishId' element={<DishWithId />} />
-                    <Route exact path='/contactus' element={<Contact resetFeedbackForm={this.props.resetFeedbackForm}/>} />
+                    <Route exact path='/contactus' element={<Contact resetFeedbackForm={this.props.resetFeedbackForm} />} />
                 </Routes>
                 <Footer />
             </div>
