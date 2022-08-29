@@ -59,8 +59,29 @@ export const fetchDishes = () => (dispatch) => {
 
     return (
         fetch(baseUrl + 'dishes') // fetches dishes data from the address http://localhost:3001/dishes
+
+            // Handle Errors    
+            .then(response => {
+                if (response.ok) {
+                    return response;  // returned response is then delivered to the next chained .then promise-handler as its param
+                }
+                else {
+                    let errorResponse = new Error('Error ' + response.status + ': ' + response.statusText);  // creating an Error object containing the error number and error text within the server response object  != ERROR HANDLER below (no answer from the server possible)
+                    errorResponse.response = response;
+                    throw errorResponse;  // throws an error with the response data in it, that can be handled in the catch-area
+                }
+            },
+                error => {
+                    let requestError = new Error(error.message);  // error promise-handler for the cases of problems with communicating to the server. != else-case above when the server communication returns an error!
+                    throw requestError;
+                })
+
+            // Format and dispatch the fetched data
             .then(response => response.json())  //a callback-func for handling a successful resolve of a promise by converting the response into a json-object to be used in the next .then to operate the data
             .then(dishes_data => dispatch(addDishes(dishes_data)))  // a callback func to dispatch the fetched json-obj to the Redux store under an action of the type ADD_DISHES
+
+            // Handle any errors
+            .catch(anyError => dispatch(dishesLoadingFailed(anyError.message)))  // .catch promise-handler works with any errors appeared while executing a fetch in a promise. Sends a message text of an Error obj to the creator function of a dispatched error action
     );
 };
 
@@ -73,9 +94,30 @@ export const fetchComments = () => (dispatch) => {
     */
 
     return (
-        fetch(baseUrl + 'comments') 
+        fetch(baseUrl + 'comments')
+
+            // Handle Errors
+            .then(response => {
+                if (response.ok) {
+                    return response;
+                }
+                else {
+                    let errorResponse = new Error('Error ' + response.status + ': ' + response.statusText);
+                    errorResponse.response = response;
+                    throw errorResponse;
+                }
+            },
+                error => {
+                    let requestError = new Error(error.message);
+                    throw requestError;
+                })
+
+            // Format and dispatch the fetched data
             .then(response => response.json())
             .then(comments_data => dispatch(addComments(comments_data)))
+
+            // Handle any errors
+            .catch(anyError => dispatch(commentsLoadingFailed(anyError.message)))
     );
 };
 
@@ -104,8 +146,27 @@ export const fetchPromos = () => (dispatch) => {
 
     return (
         fetch(baseUrl + 'promotions')
+            // Handle Errors
+            .then(response => {
+                if (response.ok) {
+                    return response;
+                }
+                else {
+                    let errorResponse = new Error('Error ' + response.status + ': ' + response.statusText);
+                    errorResponse.response = response;
+                    throw errorResponse;
+                }
+            },
+                error => {
+                    let requestError = new Error(error.message);
+                    throw requestError;
+                })
+            // Format and dispatch the fetched data
             .then(response => response.json())
             .then(promos_data => dispatch(addPromos(promos_data)))
+
+            // Handle any errors
+            .catch(anyError => dispatch(promosLoadingFailed(anyError.message)))
     );
 };
 
