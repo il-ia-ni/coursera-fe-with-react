@@ -29,9 +29,11 @@ export const Comments = (state = {
             // Creates a new comment. The action is dispatched in the Main component and is implemented in the DishDetailComponent
             let new_comment = action.payload;
 
+            /* REMOVED: Comment id is automatically created by the json-server. The comment date is added in the postComment thunk!
             // a temp solution to generate the metadata of a new Comment object (see attrs in the array of objects in shared/comments), will be moved to the server side later on. 
             new_comment.id = state.comments_data.length;  // returns the length of the current comments state (of the array!) that is containing all previous commentIDs starting with 0, i.e. arr.length == New ID!
-            new_comment.date = new Date().toISOString();
+            new_comment.date = new Date().toISOString(); 
+            */
 
             // Currently the new state is not being persisted (is not saved anywhere) and exists only in the RAM as the app still runs and the view displays it. This will be modified later on
             return {

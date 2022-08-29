@@ -7,19 +7,65 @@ Actions are events that describe something that happened in the application. Any
 import * as ActionTypes from './ActionTypes';  // ES6 import of all vars from a module
 import { baseUrl } from '../shared/BaseURL';
 
-export const addComment = (dishId, rating, author, comment) => ({
+/* AREA of actions performing POST requests to update a state in the Redux Store */
+
+export const addComment = (comment) => ({
     /* Creates an object of type ADD_COMMENT based on the states received from the combined reducers of the app
     Since this action modifies the comments state only, it is only implemented in the comments.js Comment reducer. Other reducers don't take advantage of this action */
 
     type: ActionTypes.ADD_COMMENT,  // the main key of the action object with a type of the action!
-    payload: {  // the object of the data of the action, mapped from the params of the function creating it
+    payload: comment
+
+});
+
+export const postComment = (dishId, rating, author, comment) => (dispatch) => {
+    /* A thunk creator function that posts a new comment data to the server before dispatching its data into the store using the corresponding action ADD_COMMENT 
+        props: a comment-related data received and dispatched in the CommentForm component */
+
+    const newComment = {  // the object of the data of the action, mapped from the params of the function creating it
         dishId: dishId,
         rating: rating,
         author: author,
         comment: comment
     }
 
-});
+    newComment.date = new Date().toISOString();
+
+    return fetch(baseUrl + 'comments', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'  // speicfies, what kind of data is contained in the body of the POST-request
+        },
+        body: JSON.stringify(newComment),  // turns a JS obj into a JSON string for the request data
+        credentials: 'same-origin'  // defines a type of a client-derver communication, a counterpart of CORS
+    })
+        // Post a comment and handle Errors  
+        .then(response => {
+            if (response.ok) {
+                return response;  // returned response is then delivered to the next chained .then promise-handler as its param
+            }
+            else {
+                let errorResponse = new Error('Error ' + response.status + ': ' + response.statusText);  // creating an Error object containing the error number and error text within the server response object  != ERROR HANDLER below (no answer from the server possible)
+                errorResponse.response = response;
+                throw errorResponse;  // throws an error with the response data in it, that can be handled in the catch-area
+            }
+        },
+            error => {
+                let requestError = new Error(error.message);  // error promise-handler for the cases of problems with communicating to the server. != else-case above when the server communication returns an error!
+                throw requestError;
+            })
+
+        // Format and dispatch the fetched data of the newly posted comment (returnd under code 201-created?)
+        .then(response => response.json())
+        .then(comment_data => dispatch(addComment(comment_data)))
+
+        //
+        .catch(anyError => {
+            console.log('Post comments ', anyError.message);
+            alert('An error occured while posting the new comment\nError: ' + anyError.message);
+        })
+}
+
 
 /* AREA of actions logic affecting the Dishes state of the Redux Store. 
 These action creator funcs are implemented in the Dishes.js in the switch block of the Dishes reducer function */
