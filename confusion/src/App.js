@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import './App.css';
-import Main from './components/MainComponent';
+import MainWrapper from './components/MainComponent';
 import { Provider } from 'react-redux';  // a global Redux Selector (see @https://redux.js.org/tutorials/fundamentals/part-2-concepts-data-flow#selectors) for the React app that makes the Redux Store from redux/configureStore available to all connected to Redux components of the app. Must wrap all other contents of the app (incl. React router!)
 import { ConfigureStore } from './redux/configureStore';
 
@@ -18,7 +18,7 @@ class App extends Component {
       <Provider store={redux_store}>
         <BrowserRouter>
           <div className="App">
-            <Main />
+            <MainWrapper />
           </div>
         </BrowserRouter>
       </Provider>

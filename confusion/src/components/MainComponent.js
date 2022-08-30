@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Routes, Route, Navigate, useParams } from 'react-router-dom';  // withRouter is depriciated in v6, see import below!
+import { Routes, Route, Navigate, useParams, useLocation } from 'react-router-dom';  // withRouter is depriciated in v6, see import below!
 // In V6 of react-router-dom Routes replaced Switch as a more powerful alternative. See @ https://reactrouter.com/docs/en/v6/upgrading/v5#upgrade-all-switch-elements-to-routes
 // In V6 of react-router-dom Redirect is removed. Navigate component is an alternative. See @ https://reactrouter.com/docs/en/v6/upgrading/v5#remove-redirects-inside-switch
 import { withRouter } from '../redux/configureStore';  // This withRouter-replacement enables a router for Redex-connected components! withRouter Higher Components is depreciated in react-router-dom v6. Found @ https://stackoverflow.com/questions/64782949/how-to-pass-params-into-link-using-react-router-v6 and @ https://github.com/remix-run/react-router/issues/7156
 import { connect } from 'react-redux';  // a wrapper container for React components to enable access to the Redux Store.
 import { actions } from 'react-redux-form';  // is used in the dispatcher of the action creators mapDispatchToProps of the MainComponent to reset the state of the Feedbackform's inputs upon submitting the form
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
@@ -49,6 +50,16 @@ const mapDispatchToProps = (dispatch) => ({
 
 
 /* AREA of Components */
+
+const MainWrapper = props => {
+    /* A wrapper functional component for the Main, added since the react-router-dom V6 doesn't add a Location prop to the state of the component anymore. The hook useLocation() on the other hand cannot be applied in class components in React V18!
+    Found @ https://github.com/remix-run/react-router/issues/8146
+    and @ https://github.com/remix-run/react-router/issues/7117 */
+
+    const location = useLocation()
+
+    return <Main location={location} {...props} />
+}
 
 class Main extends Component {
     /* Main class component for storing the datas of the SPA in a state and rendering the whole SPA by using React Router (activated in App.js by using BrowserRouter component!) to manage navigation between the views
@@ -162,20 +173,24 @@ class Main extends Component {
         return (
             <div>
                 <Header />
-                <Routes>
-                    <Route path='*' element={<Navigate replace to="/home" />} />
-                    <Route path='/home' element={<HomePage />} />
-                    <Route path='/aboutus/' element={<AboutUs leaders={this.props.leaders} />} />
-                    <Route exact path='/menu' element={<Menu dishes={this.props.dishes} />} />
-                    <Route path='/menu/:dishId' element={<DishWithId />} />
-                    <Route exact path='/contactus' element={<Contact resetFeedbackForm={this.props.resetFeedbackForm} />} />
-                </Routes>
+                <TransitionGroup>
+                    <CSSTransition key={this.props.location.key} classNames='page' timeout={300}>
+                        <Routes>
+                            <Route path='*' element={<Navigate replace to="/home" />} />
+                            <Route path='/home' element={<HomePage />} />
+                            <Route path='/aboutus/' element={<AboutUs leaders={this.props.leaders} />} />
+                            <Route exact path='/menu' element={<Menu dishes={this.props.dishes} />} />
+                            <Route path='/menu/:dishId' element={<DishWithId />} />
+                            <Route exact path='/contactus' element={<Contact resetFeedbackForm={this.props.resetFeedbackForm} />} />
+                        </Routes>
+                    </CSSTransition>
+                </TransitionGroup>
                 <Footer />
             </div>
         );
     }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MainWrapper));
 // ??? a react-redux method to connect props of the Main component to the state from the Redux Store as well as to dispatch  action objects to the Redux Store anytime an object is created by some component. The dispatched action object gets used by a reducer function with a previus state in the Redux Store to update the state. See @ https://redux.js.org/tutorials/fundamentals/part-2-concepts-data-flow#redux-application-data-flow
 // withRouter method is used to enable the React Router navigation through a SPA components with a Redux state
