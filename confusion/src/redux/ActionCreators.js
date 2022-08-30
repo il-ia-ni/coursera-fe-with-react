@@ -34,29 +34,16 @@ export const postComment = (dishId, rating, author, comment) => (dispatch) => {
     return fetch(baseUrl + 'comments', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'  // speicfies, what kind of data is contained in the body of the POST-request
+            'Content-Type': 'application/json'  // specifies the MIME-type of the data in the payload of the request (Multipurpose Internet Mail Extensions)
         },
         body: JSON.stringify(newComment),  // turns a JS obj into a JSON string for the request data
-        credentials: 'same-origin'  // defines a type of a client-derver communication, a counterpart of CORS
+        credentials: 'same-origin'  // defines a type of a client-derver communication, a counterpart of CORS. See @ https://web.dev/introduction-to-fetch/#response-types
     })
         // Post a comment and handle Errors  
-        .then(response => {
-            if (response.ok) {
-                return response;  // returned response is then delivered to the next chained .then promise-handler as its param
-            }
-            else {
-                let errorResponse = new Error('Error ' + response.status + ': ' + response.statusText);  // creating an Error object containing the error number and error text within the server response object  != ERROR HANDLER below (no answer from the server possible)
-                errorResponse.response = response;
-                throw errorResponse;  // throws an error with the response data in it, that can be handled in the catch-area
-            }
-        },
-            error => {
-                let requestError = new Error(error.message);  // error promise-handler for the cases of problems with communicating to the server. != else-case above when the server communication returns an error!
-                throw requestError;
-            })
+        .then()
 
         // Format and dispatch the fetched data of the newly posted comment (returnd under code 201-created?)
-        .then(response => response.json())
+        .then(response => response.json())  // .json() of a Response object (a Stream of HTTP request) returns another promise that parses the data in the body of the HTTP request to a json AND then returns a plain JS object. See https://developer.mozilla.org/en-US/docs/Web/API/Response/json
         .then(comment_data => dispatch(addComment(comment_data)))
 
         //
@@ -90,7 +77,7 @@ export const addDishes = (dishes) => ({
 export const fetchDishes = () => (dispatch) => {
     /* An arrow thunk creator function that creates a thunk with a custom logic (side effects) upon an action the thunk is applied to:
         dispatch 1: calls dishesLoading 
-        dispatch 2: calls addDishes that fethces the data from a server and pushes Dishes objs into the state of the Redux Store 
+        dispatch 2: calls addDishes that fethces the data from a server using a promise and pushes Dishes objs into the state of the Redux Store 
     params of a thunk function:
         dispatch: a Redux dispatch function that sends an action object to the Store to be used by reducers
         getState: not used in this case
@@ -104,7 +91,7 @@ export const fetchDishes = () => (dispatch) => {
     }, 2000);  // a TS Node.js method, returns a function after a delay of 2000 ms. TODO: replace with an async fetch from server */
 
     return (
-        fetch(baseUrl + 'dishes') // fetches dishes data from the address http://localhost:3001/dishes
+        fetch(baseUrl + 'dishes') // fetches dishes data from the address http://localhost:3001/dishes creating a promise https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#description
 
             // Handle Errors    
             .then(response => {
