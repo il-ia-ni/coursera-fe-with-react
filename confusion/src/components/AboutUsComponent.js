@@ -1,6 +1,9 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, CardImg, CardText, CardTitle, CardSubtitle } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { Fade, Stagger } from 'react-animation-components';
+
+import { baseUrl } from '../shared/BaseURL';
 
 function AboutUs(props) {
     /* Functional component to render Bootstrap Breadcrump structure, all contents of the About Us view of the SPA in a Bootstrap formatting as well as Bootsrap 5 Cards for each leader object based on leaders array received from props obj
@@ -9,11 +12,13 @@ function AboutUs(props) {
         leaders: an array of leader objects with data on each leader
     */
 
-    const rendered_leaders = props.leaders.map((leader) => {
+    const rendered_leaders = props.leaders.leaders_data.map((leader) => {
 
         // ??? Should the key-PROP be assigned to divs or Card is also okay? @ https://stackoverflow.com/questions/28329382/understanding-unique-keys-for-array-children-in-react-js
         return (
-            <RenderLeader leader={leader} />
+            <Fade in>
+                <RenderLeader leader={leader} />
+            </Fade>
         );
     });
 
@@ -74,7 +79,9 @@ function AboutUs(props) {
                 </div>
                 <div className="col-12">
                     <div className='row'>
-                        {rendered_leaders}
+                        <Stagger in>
+                            {rendered_leaders}
+                        </Stagger>
                     </div>
                 </div>
             </div>
@@ -94,7 +101,7 @@ function RenderLeader({ leader }) {
         <Card body key={leader.id}>
             <div className='row g-0'>
                 <div className='col-md-2'>
-                    <CardImg className='img-fluid rounded-start' src={leader.image} alt={leader.name} />
+                    <CardImg className='img-fluid rounded-start' src={baseUrl + leader.image} alt={leader.name} />
                 </div>
                 <div className='col-md-10'>
                     <CardBody>

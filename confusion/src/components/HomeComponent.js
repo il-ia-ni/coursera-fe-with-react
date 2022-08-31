@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle, Fade } from 'reactstrap';
+import { Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle } from 'reactstrap';
 import { FadeTransform } from 'react-animation-components';  // applies fading and transformation to components enclosed in it
 
 import LoadingSpinner from "./LoadingComponent";
@@ -64,6 +64,8 @@ function Home(props) {
                 </div>
                 <div className="col-12 col-md m-1 mb-5">
                     <RenderCard
+                        isLoading={props.leadersLoading}
+                        errorMssg={props.leadersLoadingFailed}
                         item={props.leader} />
                 </div>
             </div>

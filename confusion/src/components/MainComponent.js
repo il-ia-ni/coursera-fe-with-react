@@ -14,7 +14,7 @@ import AboutUs from './AboutUsComponent';
 import Menu from './MenuComponent';
 import Contact from './ContactComponent';
 
-import { postComment, fetchComments, fetchDishes, fetchPromos } from '../redux/ActionCreators';  // addComment action creator func is no longer directly available and is moved into the logic of the thunk postComment
+import { postComment, fetchComments, fetchDishes, fetchPromos, fetchLeaders } from '../redux/ActionCreators';  // addComment action creator func is no longer directly available and is moved into the logic of the thunk postComment
 import DishDetail from './DishdetailComponent';
 
 
@@ -41,6 +41,7 @@ const mapDispatchToProps = (dispatch) => ({
     fetchDishes: () => { dispatch(fetchDishes()) },  // dispatches a thunk function fetchDishes to the props of the Main component. The thunk dispatches 2 functions creating Redux actions: DISHES_LOADING and ADD_DISHES that are used later by Dishes reducer
     fetchComments: () => { dispatch(fetchComments()) },
     fetchPromos: () => { dispatch(fetchPromos()) },
+    fetchLeaders: () => { dispatch(fetchLeaders()) },
 
     // additional action creators
     postComment: (dishId, rating, author, comment) => dispatch(postComment(dishId, rating, author, comment)),  // dispatches the function creating thunk postComment to the props of the Main Component. The thunk implements ADD_COMMENT actions and is given as an attr of a rendered helper component DishWithId below, where the action gets dispatched to the Redux Store and is used later by Comments reducer after performing a custom thunk logic with a POST-request of uploading a comment data to the server
@@ -59,7 +60,9 @@ const MainWrapper = props => {
 
     const location = useLocation()
 
-    return <Main location={location} {...props} />
+    return (
+        <Main location={location} {...props} />
+    );
 }
 
 class Main extends Component {
@@ -80,6 +83,7 @@ class Main extends Component {
         this.props.fetchDishes();  // tries to load the Dishes objs into the state of the Redux Store
         this.props.fetchComments();
         this.props.fetchPromos();
+        this.props.fetchLeaders();
     };
 
     render() {
@@ -96,7 +100,9 @@ class Main extends Component {
                     dishesLoading={this.props.dishes.isLoading}
                     dishesLoadingFailed={this.props.dishes.errorMssg}
                     dish={this.props.dishes.dishes_data.filter((dish) => dish.featured)[0]}
-                    leader={this.props.leaders.filter((leader) => leader.featured)[0]}
+                    leadersLoading={this.props.leaders.isLoading}
+                    leadersLoadingFailed={this.props.leaders.errorMssg}
+                    leader={this.props.leaders.leaders_data.filter((leader) => leader.featured)[0]}
                     promosLoading={this.props.promotions.isLoading}
                     promosLoadingFailed={this.props.promotions.errorMssg}
                     promotion={this.props.promotions.promos_data.filter((promotion) => promotion.featured)[0]}

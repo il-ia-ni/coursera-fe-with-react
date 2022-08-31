@@ -220,3 +220,49 @@ export const addPromos = (promos) => ({
     payload: promos
 });
 
+
+/* AREA of actions logic affecting Leaders state of the Redux Store */
+
+export const fetchLeaders = () => (dispatch) => {
+
+    dispatch(leadersLoading(true));
+
+    return (
+        fetch(baseUrl + 'leaders')
+            .then(response => {
+                if (response.ok) {
+                    return response;
+                }
+                else {
+                    let errorResponse = new Error('Error ' + response.status + ': ' + response.statusText);
+                    errorResponse.response = response;
+                    throw errorResponse;
+                }
+            }, 
+            error => {
+                let requestError = new Error(error.message);
+                throw requestError;
+            })
+            .then(response => response.json())
+            .then(leaders_data => dispatch(addLeaders(leaders_data)))
+
+            .catch(anyError => dispatch(leadersLoadingFailed(anyError.message)))
+    )
+}
+
+export const leadersLoading = () => ({
+    // Action creator function, creates an action object of type LEADERS_LOADING
+    type: ActionTypes.LEADERS_LOADING
+})
+
+export const leadersLoadingFailed = (errorMssg) => ({
+    // Action creator function, creates an action object of type LEADERS_LOADING_FAILED
+    type: ActionTypes.LEADERS_LOADING_FAILED,
+    payload: errorMssg
+})
+
+export const addLeaders = (leaders) => ({
+    // Action creator function, creates an action object of type ADD_LEADERS
+    type: ActionTypes.ADD_LEADERS,
+    payload: leaders
+})

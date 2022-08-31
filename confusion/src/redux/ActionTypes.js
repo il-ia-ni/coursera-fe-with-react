@@ -17,7 +17,13 @@ export const ADD_COMMENTS = 'ADD_COMMENTS';
 export const COMMENTS_LOADING_FAILED = 'COMMENTS_LOADING_FAILED';
 // comments are fetched in the background as the initial Home component is loaded. There is no need for the LOADING action for them as long as they are not displayed on the main page
 
-/* Actions for frtching promotions data */
+/* Actions for fetching promotions data */
 export const ADD_PROMOS = 'ADD_PROMOS';
 export const PROMOS_LOADING = 'PROMOS_LOADING';
 export const PROMOS_LOADING_FAILED = 'PROMOS_LOADING_FAILED';
+
+/* Actions for fetching leaders data */
+export const ADD_LEADERS = 'ADD_LEADERS';
+export const LEADERS_LOADING = 'LEADERS_LOADING';
+export const LEADERS_LOADING_FAILED = 'LEADERS_LOADING_FAILED';
+
