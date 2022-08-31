@@ -1,5 +1,7 @@
 import React from "react";
-import { Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle } from 'reactstrap';
+import { Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle, Fade } from 'reactstrap';
+import { FadeTransform } from 'react-animation-components';  // applies fading and transformation to components enclosed in it
+
 import LoadingSpinner from "./LoadingComponent";
 import { baseUrl } from '../shared/BaseURL';
 
@@ -24,14 +26,21 @@ function RenderCard({ isLoading, errorMssg, item }) {
 
     else  // if object's reducer could fetch the data and the filter of the action ADD_obj returned an instance of the obj
         return (
-            <Card>
-                <CardImg src={baseUrl + item.image} alt={item.name} />
-                <CardBody>
-                    <CardTitle tag="h4">{item.name}</CardTitle>
-                    {item.designation ? <CardSubtitle tag="b">{item.designation}</CardSubtitle> : null}
-                    <CardText>{item.description}</CardText>
-                </CardBody>
-            </Card>
+            // exitTransform value means the components inside of the FadeTransform initially appear out of screen
+            <FadeTransform in transformProps={
+                {
+                    exitTransform: 'scale(0.5) translateY(-50%)'
+                }
+            }>
+                <Card>
+                    <CardImg src={baseUrl + item.image} alt={item.name} />
+                    <CardBody>
+                        <CardTitle tag="h4">{item.name}</CardTitle>
+                        {item.designation ? <CardSubtitle tag="b">{item.designation}</CardSubtitle> : null}
+                        <CardText>{item.description}</CardText>
+                    </CardBody>
+                </Card>
+            </FadeTransform>
         );
 }
 

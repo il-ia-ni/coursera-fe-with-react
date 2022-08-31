@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Card, CardImg, CardText, CardBody, CardTitle, List, Breadcrumb, BreadcrumbItem, Modal, Button, ModalHeader, ModalBody, Label, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
 
 import LoadingSpinner from './LoadingComponent';
 import { baseUrl } from '../shared/BaseURL';
@@ -87,13 +88,19 @@ function RenderDish({ dish }) {
 
     return (
         <div className="col-12 col-md-4 m-1">
-            <Card>
-                <CardImg width="100%" src={baseUrl + dish.image} alt={dish.name} />
-                <CardBody>
-                    <CardTitle tag="h5">{dish.name}</CardTitle>
-                    <CardText>{dish.description}</CardText>
-                </CardBody>
-            </Card>
+            <FadeTransform in transformProps={
+                {
+                    exitTransform: 'scale(0.5) translateY(-50%)'
+                }
+            }>
+                <Card>
+                    <CardImg width="100%" src={baseUrl + dish.image} alt={dish.name} />
+                    <CardBody>
+                        <CardTitle tag="h5">{dish.name}</CardTitle>
+                        <CardText>{dish.description}</CardText>
+                    </CardBody>
+                </Card>
+            </FadeTransform>
         </div>
     );
 }
@@ -123,10 +130,12 @@ function RenderComments({ comments, postComment, dishId }) {
         const rendered_comments = comments.map((comment) => {
 
             return (
-                <li key={comment.id}>
-                    <p>{comment.comment}</p>
-                    <p>-- {comment.author}, {_formatDate(comment.date)}</p>
-                </li>
+                <Fade in>
+                    <li key={comment.id}>
+                        <p>{comment.comment}</p>
+                        <p>-- {comment.author}, {_formatDate(comment.date)}</p>
+                    </li>
+                </Fade>
             )
         });
 
@@ -134,7 +143,9 @@ function RenderComments({ comments, postComment, dishId }) {
             <div className="col-12 col-md-6 m-1">
                 <h4>Comments</h4>
                 <List type="unstyled">
-                    {rendered_comments}
+                    <Stagger in>
+                        {rendered_comments}
+                    </Stagger>
                 </List>
                 <CommentForm dishId={dishId} postComment={postComment} />
             </div>

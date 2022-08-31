@@ -52,7 +52,8 @@ const mapDispatchToProps = (dispatch) => ({
 /* AREA of Components */
 
 const MainWrapper = props => {
-    /* A wrapper functional component for the Main, added since the react-router-dom V6 doesn't add a Location prop to the state of the component anymore. The hook useLocation() on the other hand cannot be applied in class components in React V18!
+    /* ADDED IN MODULE 4 LESSON 5 (REACT ANIMATIONS)
+    A wrapper functional component for the Main, added since the react-router-dom V6 doesn't add a Location prop to the state of the component anymore. The hook useLocation() on the other hand cannot be applied in class components in React V18!
     Found @ https://github.com/remix-run/react-router/issues/8146
     and @ https://github.com/remix-run/react-router/issues/7117 */
 
