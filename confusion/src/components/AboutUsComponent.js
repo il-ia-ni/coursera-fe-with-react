@@ -16,8 +16,8 @@ function AboutUs(props) {
 
         // ??? Should the key-PROP be assigned to divs or Card is also okay? @ https://stackoverflow.com/questions/28329382/understanding-unique-keys-for-array-children-in-react-js
         return (
-            <Fade in>
-                <RenderLeader leader={leader} />
+            <Fade in key={leader.id}>
+                <RenderLeader key={leader.id} leader={leader} />
             </Fade>
         );
     });
