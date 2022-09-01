@@ -41,7 +41,7 @@ class Contact extends Component {
             values:  Control components values received from the React-Redux-Form LocalForm component. Values are stored in a MODEL under a specified input name (see -model='.name'-attr of each Control)
         */
         console.log("Current submitted State of the Form is: " + JSON.stringify(values))
-        alert("Current submitted State of the Form is: " + JSON.stringify(values))
+        this.props.postFeedback(values.firstname, values.lastname, values.phone, values.email, values.isAgreed, values.prefContact, values.message)
         this.props.resetFeedbackForm();  // resets the Form to its initial state upon submit
     }
 
@@ -122,7 +122,7 @@ class Contact extends Component {
                                                 isMinLength: isMinLength(3)
                                             }}
                                         />
-                                        <Errors 
+                                        <Errors
                                             className='text-danger'
                                             model='.firstname'
                                             show={(field) => field.touched && !field.focus}
@@ -149,10 +149,10 @@ class Contact extends Component {
                                                 isMinLength: isMinLength(3)
                                             }}
                                         />
-                                        <Errors 
+                                        <Errors
                                             className='text-danger'
                                             model='.lastname'
-                                            show={{touched: true, focus: false}}
+                                            show={{ touched: true, focus: false }}
                                             messages={{
                                                 requiredHasValue: 'The field is required! Please enter the value. ',
                                                 isMaxLength: "The value must not be longer than 20 characters! ",
@@ -177,10 +177,10 @@ class Contact extends Component {
                                                 isMinLength: isMinLength(10)
                                             }}
                                         />
-                                        <Errors 
+                                        <Errors
                                             className='text-danger'
                                             model='.phone'
-                                            show={{touched: true, focus: false}}
+                                            show={{ touched: true, focus: false }}
                                             messages={{
                                                 requiredHasValue: 'The field is required! Please enter the value. ',
                                                 isNumber: "Only numbers are allowed! ",
@@ -204,10 +204,10 @@ class Contact extends Component {
                                                 isValidEmail
                                             }}
                                         />
-                                        <Errors 
+                                        <Errors
                                             className='text-danger'
                                             model='.email'
-                                            show={{touched: true, focus: false}}
+                                            show={{ touched: true, focus: false }}
                                             messages={{
                                                 requiredHasValue: 'The field is required! Please enter the value. ',
                                                 isValidEmail: (val) => `${val} is not a valid email address.`,

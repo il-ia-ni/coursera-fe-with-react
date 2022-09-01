@@ -14,7 +14,7 @@ import AboutUs from './AboutUsComponent';
 import Menu from './MenuComponent';
 import Contact from './ContactComponent';
 
-import { postComment, fetchComments, fetchDishes, fetchPromos, fetchLeaders } from '../redux/ActionCreators';  // addComment action creator func is no longer directly available and is moved into the logic of the thunk postComment
+import { postFeedback, postComment, fetchComments, fetchDishes, fetchPromos, fetchLeaders } from '../redux/ActionCreators';  // addComment action creator func is no longer directly available and is moved into the logic of the thunk postComment
 import DishDetail from './DishdetailComponent';
 
 
@@ -44,6 +44,8 @@ const mapDispatchToProps = (dispatch) => ({
     fetchLeaders: () => { dispatch(fetchLeaders()) },
 
     // additional action creators
+    postFeedback: (firstname, lastname, phone, email, isAgreed, prefContact, message) => dispatch(postFeedback(firstname, lastname, phone, email, isAgreed, prefContact, message)),
+
     postComment: (dishId, rating, author, comment) => dispatch(postComment(dishId, rating, author, comment)),  // dispatches the function creating thunk postComment to the props of the Main Component. The thunk implements ADD_COMMENT actions and is given as an attr of a rendered helper component DishWithId below, where the action gets dispatched to the Redux Store and is used later by Comments reducer after performing a custom thunk logic with a POST-request of uploading a comment data to the server
 
     resetFeedbackForm: () => { dispatch(actions.reset('feedbackForm')) },  // dispatches a React-Redux-Form reset-action creator to reset a form with the model name "FeedbackForm" to the original state (set in the Redux Store). The function is given to the props of the Contact component below
@@ -188,7 +190,7 @@ class Main extends Component {
                             <Route path='/aboutus/' element={<AboutUs leaders={this.props.leaders} />} />
                             <Route exact path='/menu' element={<Menu dishes={this.props.dishes} />} />
                             <Route path='/menu/:dishId' element={<DishWithId />} />
-                            <Route exact path='/contactus' element={<Contact resetFeedbackForm={this.props.resetFeedbackForm} />} />
+                            <Route exact path='/contactus' element={<Contact postFeedback={this.props.postFeedback} resetFeedbackForm={this.props.resetFeedbackForm} />} />
                         </Routes>
                     </CSSTransition>
                 </TransitionGroup>

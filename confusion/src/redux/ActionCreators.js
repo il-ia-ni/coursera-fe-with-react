@@ -9,6 +9,59 @@ import { baseUrl } from '../shared/BaseURL';
 
 /* AREA of actions performing POST requests to update a state in the Redux Store */
 
+export const addFeedback = (feedback) => ({
+    type: ActionTypes.ADD_FEEDBACK,
+    payload: feedback
+})
+
+export const postFeedback = (firstname, lastname, phone, email, isAgreed, prefContact, message) => (dispatch) => {
+
+    const newfeedback = {
+        firstname: firstname,
+        lastname: lastname,
+        phone: phone,
+        email: email,
+        isAgreed: isAgreed,
+        prefContact: prefContact,
+        message: message
+    }
+
+    newfeedback.date = new Date().toISOString();
+
+    return fetch(baseUrl + 'feedback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newfeedback),
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            if (response.ok) {
+                return response;
+            }
+            else {
+                let errorResponse = new Error('Error ' + response.status + ': ' + response.statusText);
+                errorResponse.response = response;
+                throw errorResponse;
+            }
+        },
+            error => {
+                let requestError = new Error(error.message);
+                throw requestError;
+            })
+        .then(response => response.json())
+        .then(feedback_data => dispatch(addFeedback(feedback_data)))
+        .then(feedback_data => {
+            alert("Thank you for your feedback! Following data received:\n" + JSON.stringify(feedback_data))
+        })
+
+        .catch(anyError => {
+            console.log('Post feedback ', anyError.message);
+            alert('An error occured while posting the new feedback\nError: ' + anyError.message);
+        })
+}
+
 export const addComment = (comment) => ({
     /* Creates an object of type ADD_COMMENT based on the states received from the combined reducers of the app
     Since this action modifies the comments state only, it is only implemented in the comments.js Comment reducer. Other reducers don't take advantage of this action */
@@ -40,7 +93,20 @@ export const postComment = (dishId, rating, author, comment) => (dispatch) => {
         credentials: 'same-origin'  // defines a type of a client-derver communication, a counterpart of CORS. See @ https://web.dev/introduction-to-fetch/#response-types
     })
         // Post a comment and handle Errors  
-        .then()
+        .then(response => {
+            if (response.ok) {
+                return response;
+            }
+            else {
+                let errorResponse = new Error('Error ' + response.status + ': ' + response.statusText);
+                errorResponse.response = response;
+                throw errorResponse;
+            }
+        },
+            error => {
+                let requestError = new Error(error.message);
+                throw requestError;
+            })
 
         // Format and dispatch the fetched data of the newly posted comment (returnd under code 201-created?)
         .then(response => response.json())  // .json() of a Response object (a Stream of HTTP request) returns another promise that parses the data in the body of the HTTP request to a json AND then returns a plain JS object. See https://developer.mozilla.org/en-US/docs/Web/API/Response/json
@@ -238,11 +304,11 @@ export const fetchLeaders = () => (dispatch) => {
                     errorResponse.response = response;
                     throw errorResponse;
                 }
-            }, 
-            error => {
-                let requestError = new Error(error.message);
-                throw requestError;
-            })
+            },
+                error => {
+                    let requestError = new Error(error.message);
+                    throw requestError;
+                })
             .then(response => response.json())
             .then(leaders_data => dispatch(addLeaders(leaders_data)))
 
