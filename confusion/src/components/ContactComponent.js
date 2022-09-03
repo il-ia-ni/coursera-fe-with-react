@@ -6,7 +6,7 @@ import { Breadcrumb, BreadcrumbItem, Button, Label, Col, Row } from 'reactstrap'
 - FormGroup is replaced with the Row components of reactstrap with react classes 'input-group mb-3' ('form-group' cls from the course is removed in Bootstrap 5) OR with div containers with bootstrap-class 'form-check'
 - FormFeedback is replaced with React-Redux validation */
 import { Link } from 'react-router-dom';
-import { Control, Form, Errors, actions } from 'react-redux-form';  // Form component of React-Redux-Form lets inputs data be stored in the Redux Store for the form persistance until reset
+import { Control, Form, Errors } from 'react-redux-form';  // Form component of React-Redux-Form lets inputs data be stored in the Redux Store for the form persistance until reset
 
 /* 
 Validation Functions Area for React-Redux-Form validation 
