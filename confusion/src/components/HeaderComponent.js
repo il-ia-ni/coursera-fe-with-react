@@ -56,7 +56,7 @@ class Header extends Component {
                     <div className="container d-inline-flex">
                         <NavbarToggler onClick={this.toggleNav} />
                         <NavbarBrand href="/" className="mr-auto">
-                            <img src="assets/images/logo.png" height="30" width="41" alt="Ristorante Con Fusion" />
+                            <img src="assets/images/logo.png" height="50" alt="Ristorante Con Fusion" />
                         </NavbarBrand>
                         <Collapse navbar>
                             <Nav navbar isOpen={this.state.isNavOpen} className="me-auto">
