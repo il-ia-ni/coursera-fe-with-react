@@ -75,10 +75,6 @@ class Main extends Component {
        declares helper functional component DishWithId to operate matching of selected dishes and to render a DishDetail component according to a selection of a RenderMenuItem component in a Menu component 
     */
 
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         /* A lifecycle component method being executed right after the Main Component gets mounted in the View of the SPA
         - fetches following data required for the app using thunks dispatched as component props  */
